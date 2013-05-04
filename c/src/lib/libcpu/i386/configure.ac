@@ -19,6 +19,9 @@ AM_PROG_CC_C_O
 RTEMS_CANONICALIZE_TOOLS
 RTEMS_PROG_CCAS
 
+AM_CONDITIONAL([VIRT_POK],[test x"$RTEMS_CPU_MODEL" = x"virt-pok"])
+
+
 RTEMS_AMPOLISH3
 
 # Explicitly list all Makefiles here

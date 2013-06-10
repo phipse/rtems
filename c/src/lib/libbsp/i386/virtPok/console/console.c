@@ -15,7 +15,8 @@
 
 #include <bsp.h>
 #include <rtems/libio.h>
-#include <bsp/poksyscalls.h>
+//#include <bsp/poksyscalls.h>
+#include <bsp/virtLayerBSP.h>
 
 /*  console_initialize
  *
@@ -42,9 +43,19 @@ rtems_device_driver console_initialize(
     (rtems_device_minor_number) 0
   );
 
-  if (status != RTEMS_SUCCESSFUL){
+  if (status != RTEMS_SUCCESSFUL)
+  {
     rtems_fatal_error_occurred(status);
   }
+
+// Virt: Added the virtual console init.
+  status = virt_consoleInit();
+
+  if( status != 0 )
+  {
+    rtems_fatal_error_occurred(status);
+  }
+
   return RTEMS_SUCCESSFUL;
 }
 
@@ -85,7 +96,7 @@ char inbyte( void )
    *  If polling, wait until a character is available.
    */
 
-  return '\0';
+  return virt_charRead();
 }
 
 /*  outbyte
@@ -103,24 +114,18 @@ void outbyte(
   char ch
 )
 {
-  /*
-   *  If polling, wait for the transmitter to be ready.
-   *  Check for flow control requests and process.
-   *  Then output the character.
-   */
-
-	pok_syscall2 (POK_SYSCALL_CONSWRITE, (uint32_t)&ch, 1);
-
-  /*
-   *  Carriage Return/New line translation.
-   */
-
-  if ( ch == '\n' )
-    outbyte( '\r' );
+  virt_charWrite(c);
 }
 
+/* printk support */
 BSP_output_char_function_type BSP_output_char = outbyte;
 BSP_polling_getchar_function_type BSP_poll_char = inbyte;
+
+
+/* Console support */
+/* It is mostly a translation of termios intended calls to the char by char
+ * printk interface
+ */
 
 /*
  *  Open entry point

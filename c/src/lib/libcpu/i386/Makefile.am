@@ -4,6 +4,11 @@ noinst_PROGRAMS =
 
 include $(top_srcdir)/../../../automake/compile.am
 
+if VIRT_POK
+
+#insert virt_pok cpu includes here
+
+else
 include_libcpudir = $(includedir)/libcpu
 
 include_libcpu_HEADERS = cpu.h cpuModel.h
@@ -25,6 +30,8 @@ noinst_PROGRAMS += page.rel
 page_rel_SOURCES = page.c cpu.h
 page_rel_CPPFLAGS = $(AM_CPPFLAGS)
 page_rel_LDFLAGS = $(RTEMS_RELLDFLAGS)
+
+endif
 
 include $(srcdir)/preinstall.am
 include $(top_srcdir)/../../../automake/local.am

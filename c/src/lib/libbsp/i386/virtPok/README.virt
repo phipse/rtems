@@ -1,0 +1,16 @@
+Date: 06/10/2013
+Author: Philipp Eppelt
+Purpose: Information on this BSP
+
+
+This BSP is intended to be used with POK. Other hosts are currently not
+supported.
+
+The BSP uses functions from the virtualization layer. The host system has to
+provide a library implementing the function specified in the virtualization
+layer. Otherwise the compilation process will fail.
+
+Further information on the project can be obtained in the RTEMS Wiki:
+wiki.rtems.org/wiki/index.php/GSOC_2013_-_Paravirtualization_of_RTEMS
+
+

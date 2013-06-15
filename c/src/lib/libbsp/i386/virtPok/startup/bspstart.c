@@ -17,22 +17,11 @@
 #include <string.h>
 
 #include <bsp.h>
-#include <bsp/poksyscalls.h>
 #include <rtems.h>
 #include <rtems/bspIo.h>
+#include <bsp/virtLayerBSP.h>
 
-/*
- * will be used when POK header files can be included
-#include <types.h>
-#include <libc/stdio.h> 
-#include <core/syscall.h> 
-*/
 
-/*
-pok_ret_t pok_syscall2  (pok_syscall_id_t syscall_id,
-    uint32_t arg1,
-    uint32_t arg2);
-    */
 /*
  *  bsp_start
  *
@@ -40,10 +29,9 @@ pok_ret_t pok_syscall2  (pok_syscall_id_t syscall_id,
  */
 void bsp_start( void )
 {
+
   char buff[] = {"RTEMS bsp_start()\n"};
 
-  size_t pos;
-  pos = sizeof (buff);  /* strlen ("buff[]"); */
+  virt_charWrite( buff );
 
-  pok_syscall2 (POK_SYSCALL_CONSWRITE, (uint32_t)buff, pos);
 }

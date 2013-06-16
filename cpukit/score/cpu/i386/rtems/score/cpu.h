@@ -29,7 +29,7 @@ extern "C" {
 
 #include <rtems/score/types.h>
 #include <rtems/score/i386.h>
-
+// TODO Fix includes for interrupts.h -- kept include structure in libcpu
 #ifndef ASM
 #include <rtems/score/interrupts.h>	/* formerly in libcpu/cpu.h> */
 #include <rtems/score/registers.h>	/* formerly part of libcpu */
@@ -358,6 +358,7 @@ SCORE_EXTERN Context_Control_fp  _CPU_Null_fp_context;
  *     + restore previous interrupt level (enable)
  *     + temporarily restore interrupts (flash)
  *     + set a particular level
+ *	    -> MOVED to libcpu/i386/
  */
 
 #define _CPU_ISR_Disable( _level ) i386_disable_interrupts( _level )
@@ -365,12 +366,6 @@ SCORE_EXTERN Context_Control_fp  _CPU_Null_fp_context;
 #define _CPU_ISR_Enable( _level )  i386_enable_interrupts( _level )
 
 #define _CPU_ISR_Flash( _level )   i386_flash_interrupts( _level )
-
-#define _CPU_ISR_Set_level( _new_level ) \
-  { \
-    if ( _new_level ) __asm__ volatile ( "cli" ); \
-    else              __asm__ volatile ( "sti" ); \
-  }
 
 uint32_t   _CPU_ISR_Get_level( void );
 
@@ -397,7 +392,7 @@ uint32_t   _CPU_ISR_Get_level( void );
  *     + calculate the initial pointer into a FP context area
  *     + initialize an FP context area
  */
-
+//TODO evaluate if CPU_EFLAGS_INTERRUPTS_* must be moved to libcpu
 #define CPU_EFLAGS_INTERRUPTS_ON  0x00003202
 #define CPU_EFLAGS_INTERRUPTS_OFF 0x00003002
 
@@ -474,22 +469,6 @@ uint32_t   _CPU_ISR_Get_level( void );
   }
 
 /* end of Context handler macros */
-
-/*
- *  Fatal Error manager macros
- *
- *  These macros perform the following functions:
- *    + disable interrupts and halt the CPU
- */
-
-#define _CPU_Fatal_halt( _error ) \
-  { \
-    __asm__ volatile ( "cli ; \
-                    movl %0,%%eax ; \
-                    hlt" \
-                    : "=r" ((_error)) : "0" ((_error)) \
-    ); \
-  }
 
 #endif /* ASM */
 

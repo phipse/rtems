@@ -6,12 +6,17 @@ include $(top_srcdir)/../../../automake/compile.am
 
 if VIRT_POK
 
-#insert virt_pok cpu includes here
-
-else
+# TODO insert virt_pok cpu includes here
 include_libcpudir = $(includedir)/libcpu
 
-include_libcpu_HEADERS = cpu.h cpuModel.h
+include_libcpu_HEADERS = cpu.h virtual/include/cpuModel.h
+include_libcpu_HEADERS += ../shared/include/cache.h
+include_libcpu_HEADERS += byteorder.h
+
+else # CPU is not virtualized -> native
+include_libcpudir = $(includedir)/libcpu
+
+include_libcpu_HEADERS = cpu.h native/include/cpuModel.h
 include_libcpu_HEADERS += ../shared/include/cache.h
 include_libcpu_HEADERS += byteorder.h
 

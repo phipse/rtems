@@ -2,6 +2,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT([rtems-c-src-lib-libcpu-i386],[_RTEMS_VERSION],[http://www.rtems.org/bugzilla])
+# TODO check ac_config_srcdir cpuModel.h -- replacement necessary?
 AC_CONFIG_SRCDIR([cpuModel.h])
 RTEMS_TOP([../../../../..],[../../..])
 

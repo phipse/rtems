@@ -26,7 +26,7 @@
 /*
  *  Interrupt Level Macros
  */
-#include <rtems/score/interrupts.h>
+#include <libcpu/interrupts.h>
 
 /*
  *  Segment Access Routines

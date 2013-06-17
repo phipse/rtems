@@ -29,9 +29,10 @@ extern "C" {
 
 #include <rtems/score/types.h>
 #include <rtems/score/i386.h>
+#include <libcpu/cpu-score-split.h>
 // TODO Fix includes for interrupts.h -- kept include structure in libcpu
 #ifndef ASM
-#include <rtems/score/interrupts.h>	/* formerly in libcpu/cpu.h> */
+#include <libcpu/interrupts.h>	/* formerly in libcpu/cpu.h> */
 #include <rtems/score/registers.h>	/* formerly part of libcpu */
 #endif
 

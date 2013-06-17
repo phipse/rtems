@@ -7,14 +7,14 @@
  * architecture. 
  */
 
-// TODO add guard 
+#ifndef _RTEMS_LIBCPU_CPU_H
+#define _RTEMS_LIBCPU_CPU_H
 
 #ifdef __cplusplus
-extern "c" {
+extern "C" {
 #endif
 
 // TODO fix includes
-#include <rtems/score/types.h>
 #include <rtems/score/i386.h>
 
 
@@ -60,3 +60,6 @@ extern "c" {
 #ifdef __cplusplus
 }
 #endif
+
+
+#endif /* _RTEMS_LIBCPU_CPU_H */

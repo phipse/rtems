@@ -7,15 +7,22 @@
  *  idle. On i386 "hlt" is used, which is priviledged and causes a GPF.
  */
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 // TODO add includes
-#include <rtems/score/types.h>
+#include <rtems/score/cpu.h>	// function definition
 
 
 
 /**
- * @brief Idle thread calls virtualized idle function
+ * @brief Idle thread executes idle operation
  *
- *
+ * If used in a virtualized environment, this executes a call to the
+ * virtualization layer.
  */
 
 void *_CPU_Thread_Idle_body( uintptr_t ignored )
@@ -27,3 +34,8 @@ void *_CPU_Thread_Idle_body( uintptr_t ignored )
   }
   return NULL;
 }
+
+
+#ifdef __cpluplus
+}
+#endif 

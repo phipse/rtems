@@ -13,6 +13,7 @@ dist_project_lib_DATA = bsp_specs
 
 include_HEADERS = include/bsp.h
 include_HEADERS += ../../shared/include/tm27.h
+include_HEADERS += include/virtLayerBSP.h
 
 nodist_include_HEADERS = include/bspopts.h
 nodist_include_bsp_HEADERS = ../../shared/include/bootcard.h
@@ -27,37 +28,34 @@ noinst_LIBRARIES = libbsp.a
 libbsp_a_SOURCES =
 
 # startup
-libbsp_a_SOURCES += ../../shared/bspclean.c ../../shared/bsplibc.c \
-    ../../shared/bsppretaskinghook.c ../../shared/bsppredriverhook.c \
-    start/bspgetworkarea.c ../../shared/bsppost.c \
-    startup/bspstart.c ../../shared/bootcard.c ../../shared/sbrk.c \
-    startup/setvec.c ../../shared/gnatinstallhandler.c ../../shared/bspreset.c \
-		start/start.c
+libbsp_a_SOURCES += ../../shared/bspclean.c i
+libbsp_a_SOURCES += ../../shared/bsplibc.c 
+libbsp_a_SOURCES += ../../shared/bsppretaskinghook.c 
+libbsp_a_SOURCES += ../../shared/bsppredriverhook.c 
+libbsp_a_SOURCES += start/bspgetworkarea.c
+libbsp_a_SOURCES += ../../shared/bsppost.c
+libbsp_a_SOURCES += startup/bspstart.c 
+libbsp_a_SOURCES += ../../shared/bootcard.c 
+libbsp_a_SOURCES += ../../shared/sbrk.c 
+libbsp_a_SOURCES += startup/setvec.c 
+libbsp_a_SOURCES += ../../shared/gnatinstallhandler.c 
+libbsp_a_SOURCES += ../../shared/bspreset.c 
+libbsp_a_SOURCES += start/start.c
+# TODO I don't really need an IDT, don't I?
+libbsp_a_SOURCES += ../../i386/shared/irq/idt.c
+
 # clock
 libbsp_a_SOURCES += clock/ckinit.c
 # console
 libbsp_a_SOURCES += console/console.c
 # timer
 libbsp_a_SOURCES += timer/timer.c timer/timerisr.c
-#score
-libbsp_a_SOURCES += score/cpu.c score/cpu_asm2.S score/cpu_asm.c
-#irq
-libbsp_a_SOURCES += irq/irq_pok.c
+
+libbsp_a_LIBADD = ../../../libcpu/@RTEMS_CPU@/cache.rel
+libbsp_a_LIBADD += ../../../libcpu/@RTEMS_CPU@/page.rel
+libbsp_a_LIBADD += ../../../libcpu/@RTEMS_CPU@/score.rel
 
 EXTRA_DIST = times
 
 include $(srcdir)/preinstall.am
 include $(top_srcdir)/../../../../automake/local.am
-
-nodist_include_bsp_HEADERS += irq/irq.h \
-	irq/irq_pok.h
-# score
-nodist_include_bsp_HEADERS += score/cpu.h \
-	score/interrupts.h \
-	score/registers.h \
-	score/types.h \
-	score/idtr.h \
-	score/i386.h
-
-# start
-nodist_include_bsp_HEADERS += start/poksyscalls.h

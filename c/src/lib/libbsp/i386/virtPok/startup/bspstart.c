@@ -19,7 +19,7 @@
 #include <bsp.h>
 #include <rtems.h>
 #include <rtems/bspIo.h>
-#include <bsp/virtLayerBSP.h>
+#include <virtLayerBSP.h>
 
 
 /*

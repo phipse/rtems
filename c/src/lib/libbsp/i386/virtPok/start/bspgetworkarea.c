@@ -20,15 +20,7 @@
 #ifdef BSP_GET_WORK_AREA_DEBUG
   #include <rtems/bspIo.h>
 #endif
-#ifdef BSP_INTERRUPT_STACK_AT_WORK_AREA_BEGIN
-  #include <rtems/config.h>
-#endif
 
-#include <bsp/poksyscalls.h>
-
-#if defined(HAS_UBOOT) && !defined(BSP_DISABLE_UBOOT_WORK_AREA_CONFIG)
-  #define USE_UBOOT
-#endif
 
 /*
  *  These are provided by the linkcmds for ALL of the BSPs which use this file.
@@ -59,20 +51,15 @@ void bsp_get_work_area(
   uintptr_t data_Base = (uintptr_t) dataBase;
 
   uintptr_t work_base = (uintptr_t) WorkAreaBase;
-  uintptr_t ram_end;
-  uint32_t size;
-  uint32_t base_addr;
-  uint32_t pok_stack_size;
-  
-  #ifdef BSP_INTERRUPT_STACK_AT_WORK_AREA_BEGIN
-    work_base += Configuration.interrupt_stack_size;
-  #endif
+  uint32_t size = 0;
+  uint32_t base_addr = 0;
+  uint32_t pok_stack_size = 0;
 
-  pok_syscall3 (POK_SYSCALL_PARTITION_GET_MEMORY_INFO, (uint32_t)&size, (uint32_t)&base_addr, (uint32_t)&pok_stack_size);
+  // TODO add call to virtlayer to get space
 
   *work_area_start = (void *) work_base + pok_stack_size;
   *work_area_size  = size - work_base - pok_stack_size;
-  *heap_start      = BSP_BOOTCARD_HEAP_USES_WORK_AREA;
+  *heap_start      = 0;
   *heap_size       = (uintptr_t) HeapSize;
 
   /*

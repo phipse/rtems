@@ -16,7 +16,7 @@
 #include <bsp.h>
 #include <rtems/libio.h>
 //#include <bsp/poksyscalls.h>
-#include <bsp/virtLayerBSP.h>
+#include <virtLayerBSP.h>
 
 /*  console_initialize
  *
@@ -114,7 +114,7 @@ void outbyte(
   char ch
 )
 {
-  virt_charWrite(c);
+  virt_charWrite(ch);
 }
 
 /* printk support */

@@ -39,10 +39,6 @@ $(PROJECT_INCLUDE)/rtems/score/types.h: rtems/score/types.h $(PROJECT_INCLUDE)/r
 	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/rtems/score/types.h
 PREINSTALL_FILES += $(PROJECT_INCLUDE)/rtems/score/types.h
 
-$(PROJECT_INCLUDE)/rtems/score/interrupts.h: rtems/score/interrupts.h $(PROJECT_INCLUDE)/rtems/score/$(dirstamp)
-	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/rtems/score/interrupts.h
-PREINSTALL_FILES += $(PROJECT_INCLUDE)/rtems/score/interrupts.h
-
 $(PROJECT_INCLUDE)/rtems/score/registers.h: rtems/score/registers.h $(PROJECT_INCLUDE)/rtems/score/$(dirstamp)
 	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/rtems/score/registers.h
 PREINSTALL_FILES += $(PROJECT_INCLUDE)/rtems/score/registers.h

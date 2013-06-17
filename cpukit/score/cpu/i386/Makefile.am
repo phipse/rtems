@@ -7,7 +7,6 @@ include_rtems_scoredir = $(includedir)/rtems/score
 include_rtems_score_HEADERS = rtems/score/cpu.h
 include_rtems_score_HEADERS += rtems/score/i386.h
 include_rtems_score_HEADERS += rtems/score/types.h
-include_rtems_score_HEADERS += rtems/score/interrupts.h
 include_rtems_score_HEADERS += rtems/score/registers.h
 include_rtems_score_HEADERS += rtems/score/idtr.h
 include_rtems_score_HEADERS += rtems/score/cpuatomic.h

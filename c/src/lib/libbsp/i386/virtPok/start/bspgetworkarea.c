@@ -38,14 +38,10 @@ extern char dataBase[];
  *  is to be allocated between the RTEMS Workspace and the C Program
  *  Heap.
  */
-void bsp_get_work_area(
-  void      **work_area_start,
-  uintptr_t  *work_area_size,
-  void      **heap_start,
-  uintptr_t  *heap_size
+void bsp_work_area_initialize( void
 )
 {
-  uintptr_t ELF_Base = (uintptr_t) ELFBase;
+/*  uintptr_t ELF_Base = (uintptr_t) ELFBase;
   uintptr_t text_Base = (uintptr_t) textBase;
   uintptr_t rodata_Base = (uintptr_t) rodataBase;
   uintptr_t data_Base = (uintptr_t) dataBase;
@@ -56,12 +52,13 @@ void bsp_get_work_area(
   uint32_t pok_stack_size = 0;
 
   // TODO add call to virtlayer to get space
+  // bsp_work_area_initialize_default( area_start, area_size );
 
   *work_area_start = (void *) work_base + pok_stack_size;
   *work_area_size  = size - work_base - pok_stack_size;
   *heap_start      = 0;
   *heap_size       = (uintptr_t) HeapSize;
-
+*/
   /*
    *  The following may be helpful in debugging what goes wrong when
    *  you are allocating the Work Area in a new BSP.
@@ -100,4 +97,5 @@ void bsp_get_work_area(
      );
   }
  #endif
+    
 }

@@ -33,6 +33,8 @@ extern char textBase[];
 extern char rodataBase[];
 extern char dataBase[];
 
+unsigned long _Global_descriptor_table = 0;
+
 /*
  *  This method returns the base address and size of the area which
  *  is to be allocated between the RTEMS Workspace and the C Program

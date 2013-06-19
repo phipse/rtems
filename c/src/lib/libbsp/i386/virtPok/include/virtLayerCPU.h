@@ -31,6 +31,12 @@ virt_disableInterrupts( int _level );
 void 
 virt_flashInterrupts( int _level );
 
+void
+virt_openInterrupts();
+
+void
+virt_closeInterrupts();
+
 int
 virt_getInterruptLevel( void );
 
@@ -45,6 +51,11 @@ virt_getInterruptLevel( void );
 void
 virt_idleThread( void );
 
+
+/* Error handling */
+
+void
+virt_execStopError( int _error );
 
 
 

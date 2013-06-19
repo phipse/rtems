@@ -8,10 +8,12 @@
 #ifndef RTEMS_VIRT_LAYER_CPU_H
 #define RTEMS_VIRT_LAYER_CPU_H
 
+#ifndef ASM
+
 /* Startup functions */
 
 int 
-virt_getWorkSpaceArea();
+virt_getWorkSpaceArea( void );
 
 
 
@@ -32,13 +34,13 @@ void
 virt_flashInterrupts( int _level );
 
 void
-virt_openInterrupts();
+virt_openInterrupts( void );
 
 void
-virt_closeInterrupts();
+virt_closeInterrupts( void );
 
 int
-virt_getInterruptLevel( void );
+virt_getInterruptLevel( int _level );
 
 
 
@@ -57,6 +59,6 @@ virt_idleThread( void );
 void
 virt_execStopError( int _error );
 
-
+#endif /* ASM */
 
 #endif /* RTEMS_VIRT_LAYER_CPU_H */

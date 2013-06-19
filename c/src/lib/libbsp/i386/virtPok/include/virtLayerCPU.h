@@ -10,13 +10,6 @@
 
 #ifndef ASM
 
-/* Startup functions */
-
-int 
-virt_getWorkSpaceArea( void );
-
-
-
 /* Interrupts */
 int
 virt_requestIrq( int vector );

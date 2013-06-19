@@ -47,5 +47,9 @@ int
 virt_faultHandler(void);
 
 
+/* Startup functions */
+
+int 
+virt_getWorkSpaceArea( void );
 
 #endif /* RTEMS_VIRT_LAYER_BSP_H */

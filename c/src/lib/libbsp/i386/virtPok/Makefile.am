@@ -64,7 +64,8 @@ libpokpart.a :
 	sed -e "s/\.lo/\.o/g" libpart.list > libpart.o.list
 	ar x libpart.a
 	rename .lo .o `cat libpart.list`
-	ar cru libpokpart.a `cat libpart.o.list`
+#	ar cru libpokpart.a `cat libpart.o.list`
+	ar q libbsp.a `cat libpart.o.list`
 # rm `cat libpart.o.list` is optional as all files get overwritten with new
 # ones by 'ar x'. But I think it's bad style to remove object files during 
 # compilation.

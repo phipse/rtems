@@ -14,6 +14,7 @@ dist_project_lib_DATA = bsp_specs
 include_HEADERS = include/bsp.h
 include_HEADERS += ../../shared/include/tm27.h
 include_HEADERS += include/virtLayerBSP.h
+include_HEADERS += include/virtLayerCPU.h
 
 nodist_include_HEADERS = include/bspopts.h
 nodist_include_bsp_HEADERS = ../../shared/include/bootcard.h
@@ -54,6 +55,8 @@ libbsp_a_SOURCES += timer/timer.c timer/timerisr.c
 libbsp_a_LIBADD = ../../../libcpu/@RTEMS_CPU@/cache.rel
 libbsp_a_LIBADD += ../../../libcpu/@RTEMS_CPU@/page.rel
 libbsp_a_LIBADD += ../../../libcpu/@RTEMS_CPU@/score.rel
+
+#libbsp_a_LIBADD += libpart.a
 
 EXTRA_DIST = times
 

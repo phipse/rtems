@@ -44,7 +44,7 @@ typedef int  (*rtems_raw_irq_is_enabled)	(const struct __rtems_raw_irq_connect_d
 
 #define i386_enable_interrupts( _level )  \
   { \
-    virt_enableInterrupts( _level ) \
+    virt_enableInterrupts( _level ); \
   }
 
 #define i386_flash_interrupts( _level ) \

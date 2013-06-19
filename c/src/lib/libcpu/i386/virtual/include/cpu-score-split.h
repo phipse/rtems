@@ -5,6 +5,9 @@
  * 
  * This include file contains information for the virtualized i386
  * architecture. 
+ *
+ * Author:  Philipp Eppelt
+ * Date:    06/19/2013
  */
 
 #ifndef _RTEMS_LIBCPU_CPU_H
@@ -14,8 +17,8 @@
 extern "C" {
 #endif
 
-// TODO fix includes
 #include <rtems/score/i386.h>
+#include <virtLayerCPU.h>
 
 
 
@@ -28,11 +31,10 @@ extern "C" {
  */
 
 
-// TODO replace with virtLayer calls
 #define _CPU_ISR_Set_level( _new_level ) \
   { \
-    if ( _new_level ) __asm__ volatile ( "cli" ); \
-    else              __asm__ volatile ( "sti" ); \
+    if ( _new_level ) virt_closeInterrupts();  \
+    else              virt_openInterrupts(); \
   }
 
 
@@ -44,14 +46,10 @@ extern "C" {
  *    + disable interrupts and halt the CPU
  */
 
-// TODO replace with virtLayer call
 #define _CPU_Fatal_halt( _error ) \
   { \
-    __asm__ volatile ( "cli ; \
-                    movl %0,%%eax ; \
-                    hlt" \
-                    : "=r" ((_error)) : "0" ((_error)) \
-    ); \
+    virt_closeInterrupts(); \
+    virt_execStopError( _error ); \
   }
 
 #endif /* ASM */  

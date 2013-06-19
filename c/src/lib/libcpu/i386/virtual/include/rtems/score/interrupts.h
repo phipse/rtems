@@ -28,6 +28,9 @@ typedef void (*rtems_raw_irq_enable)		(const struct __rtems_raw_irq_connect_data
 typedef void (*rtems_raw_irq_disable)		(const struct __rtems_raw_irq_connect_data__*);
 typedef int  (*rtems_raw_irq_is_enabled)	(const struct __rtems_raw_irq_connect_data__*);
 
+#include <virtLayerCPU.h>
+
+
 /**
  * @name Interrupt Level Macros
  * 
@@ -36,41 +39,24 @@ typedef int  (*rtems_raw_irq_is_enabled)	(const struct __rtems_raw_irq_connect_d
 
 #define i386_disable_interrupts( _level ) \
   { \
-    __asm__ volatile ( "pushf ; \
-                    cli ; \
-                    pop %0" \
-                   : "=rm" ((_level)) \
-    ); \
+    virt_disableInterrupts( _level ); \
   }
 
 #define i386_enable_interrupts( _level )  \
   { \
-    __asm__ volatile ( "push %0 ; \
-                    popf" \
-                    : : "rm" ((_level)) : "cc" \
-    ); \
+    virt_enableInterrupts( _level ) \
   }
 
 #define i386_flash_interrupts( _level ) \
   { \
-    __asm__ volatile ( "push %0 ; \
-                    popf ; \
-                    cli" \
-                    : : "rm" ((_level)) : "cc" \
-    ); \
+    virt_enableInterrupts(_level); \
+    virt_disableInterrupts(_level); \
   }
 
 #define i386_get_interrupt_level( _level ) \
-  do { \
-    register uint32_t   _eflags; \
-    \
-    __asm__ volatile ( "pushf ; \
-                    pop %0" \
-                    : "=rm" ((_eflags)) \
-    ); \
-    \
-    _level = (_eflags & EFLAGS_INTR_ENABLE) ? 0 : 1; \
-  } while (0)
+  { \
+    virt_getInterruptLevel( _level ); \
+  }
 
 #define _CPU_ISR_Disable( _level ) i386_disable_interrupts( _level )
 #define _CPU_ISR_Enable( _level ) i386_enable_interrupts( _level )

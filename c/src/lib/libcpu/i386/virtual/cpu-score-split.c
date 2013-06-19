@@ -15,7 +15,7 @@ extern "C" {
 
 // TODO add includes
 #include <rtems/score/cpu.h>	// function definition
-
+#include <virtLayerCPU.h>
 
 
 /**
@@ -30,7 +30,7 @@ void *_CPU_Thread_Idle_body( uintptr_t ignored )
   while(1)
   {
   // replace with call to virtualization layer  
-    __asm__ volatile ("hlt");
+    virt_idleThread();
   }
   return NULL;
 }

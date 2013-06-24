@@ -41,7 +41,7 @@ libbsp_a_SOURCES += ../../shared/sbrk.c
 libbsp_a_SOURCES += startup/setvec.c 
 libbsp_a_SOURCES += ../../shared/gnatinstallhandler.c 
 libbsp_a_SOURCES += ../../shared/bspreset.c 
-libbsp_a_SOURCES += start/start.c
+libbsp_a_SOURCES += start/_start.S
 # TODO I don't really need an IDT, don't I?
 libbsp_a_SOURCES += ../../i386/shared/irq/idt.c
 

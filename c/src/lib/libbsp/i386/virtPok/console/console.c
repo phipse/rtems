@@ -114,7 +114,7 @@ void outbyte(
   char ch
 )
 {
-  virt_charWrite(ch);
+  virt_charWrite(&ch);
 }
 
 /* printk support */

@@ -26,12 +26,17 @@ include_bsp_HEADERS  += ../shared/irq/irq_asm.h
 
 nodist_include_HEADERS += ../../shared/include/coverhd.h
 
+#noinst_LIBRARIES = libbspstart.a
+#libbspstart_a_SOURCES = start/_start.S
+
 dist_project_lib_DATA += startup/linkcmds
 
 noinst_LIBRARIES = libbsp.a
 libbsp_a_SOURCES =
 
 # startup
+libbsp_a_SOURCES += start/_start.S
+project_lib_DATA = _start.$(OBJEXT)
 libbsp_a_SOURCES += ../../shared/bspclean.c
 libbsp_a_SOURCES += ../../shared/bsplibc.c 
 libbsp_a_SOURCES += ../../shared/bsppretaskinghook.c 
@@ -43,8 +48,7 @@ libbsp_a_SOURCES += ../../shared/bootcard.c
 libbsp_a_SOURCES += ../../shared/sbrk.c 
 libbsp_a_SOURCES += startup/setvec.c 
 libbsp_a_SOURCES += ../../shared/gnatinstallhandler.c 
-libbsp_a_SOURCES += ../../shared/bspreset.c 
-libbsp_a_SOURCES += start/start.c
+libbsp_a_SOURCES += ../../shared/bspreset_loop.c 
 # TODO I don't really need an IDT, don't I?
 libbsp_a_SOURCES += ../../i386/shared/irq/idt.c
 

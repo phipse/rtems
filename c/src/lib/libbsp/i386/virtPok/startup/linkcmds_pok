@@ -1,0 +1,32 @@
+HeapSize = DEFINED(HeapSize) ? HeapSize : 
+          DEFINED(_HeapSize) ? _HeapSize : 0x0;
+RamBase = DEFINED(_RamBase) ? RamBase : 0x0;
+RamSize = DEFINED(RamSize) ? RamSize    : 
+          DEFINED(_RamSize) ? _RamSize : 0xFFFFFFFF;
+
+ENTRY(_start)
+SECTIONS
+{
+  /* . = 0x0;*/
+  
+  ELFBase = .;
+  __partition_begin = . ;
+  textBase = .;
+  .text :
+  {
+    *(.text)
+  }
+  
+  rodataBase = .;
+  .rodata :
+  {
+    *(.rodata)
+  }
+  dataBase = .;
+  .data :
+  {
+    *(.data) *(.bss) *(COMMON)
+  }
+  WorkAreaBase = .;
+  __partition_end = . ;
+} 

@@ -13,8 +13,8 @@
 OUTPUT_FORMAT("elf32-i386", "elf32-i386",
 	      "elf32-i386")
 OUTPUT_ARCH(i386)
-ENTRY(_start)
 */
+ENTRY(start)
 HeapSize = DEFINED(HeapSize) ? HeapSize : 
           DEFINED(_HeapSize) ? _HeapSize : 0x0;
 RamBase = DEFINED(_RamBase) ? RamBase : 0x0;

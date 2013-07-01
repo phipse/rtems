@@ -40,22 +40,21 @@ unsigned long _Global_descriptor_table = 0;
  *  is to be allocated between the RTEMS Workspace and the C Program
  *  Heap.
  */
-void bsp_work_area_initialize( void
-)
+void bsp_work_area_initialize( void )
 {
 /*  uintptr_t ELF_Base = (uintptr_t) ELFBase;
   uintptr_t text_Base = (uintptr_t) textBase;
   uintptr_t rodata_Base = (uintptr_t) rodataBase;
   uintptr_t data_Base = (uintptr_t) dataBase;
-
+*/
   uintptr_t work_base = (uintptr_t) WorkAreaBase;
-  uint32_t size = 0;
-  uint32_t base_addr = 0;
-  uint32_t pok_stack_size = 0;
+  uint32_t work_size = 0x100000 * 4;
+//  uint32_t base_addr = 0;
+//  uint32_t pok_stack_size = 0;
 
   // TODO add call to virtlayer to get space
-  // bsp_work_area_initialize_default( area_start, area_size );
-
+  bsp_work_area_initialize_default( work_base, work_size );
+/*
   *work_area_start = (void *) work_base + pok_stack_size;
   *work_area_size  = size - work_base - pok_stack_size;
   *heap_start      = 0;

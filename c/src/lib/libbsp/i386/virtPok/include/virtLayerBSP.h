@@ -11,31 +11,31 @@
  * \brief Initializes the console.
  *
  */
-int
+__attribute__((fastcall)) int
 virt_consoleInit(void);
 
 /**
  * \brief Reads a character from the console.
  */
-char
+__attribute__((fastcall)) char
 virt_charRead(void);
 
 /**
  * \brief Writes a character to the console.
  */
-void
+__attribute__((fastcall)) void
 virt_charWrite(char* c);
 
 /**
  * \brief Initializes the clock.
  */
-int
+__attribute__((fastcall)) int
 virt_clockInit(void);
 
 /**
  * \brief Reads the clock.
  */
-int
+__attribute__((fastcall)) int
 virt_clockRead(void);
 
 /**
@@ -43,13 +43,13 @@ virt_clockRead(void);
  *
  * POK will forward occuring faults to this handler.
  */
-int
+__attribute__((fastcall)) int
 virt_faultHandler(void);
 
 
 /* Startup functions */
 
-int 
+__attribute__((fastcall)) int 
 virt_getWorkSpaceArea( void );
 
 #endif /* RTEMS_VIRT_LAYER_BSP_H */

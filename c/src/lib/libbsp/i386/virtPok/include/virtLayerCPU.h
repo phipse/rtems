@@ -11,28 +11,28 @@
 #ifndef ASM
 
 /* Interrupts */
-int
+__attribute__((fastcall)) int
 virt_requestIrq( int vector );
 
-void
+__attribute__((fastcall)) void
 virt_detachIrq( int vector );
 
-void
+__attribute__((fastcall)) void
 virt_enableInterrupts( int _level );
 
-void
+__attribute__((fastcall)) void
 virt_disableInterrupts( int _level );
 
-void 
+__attribute__((fastcall)) void 
 virt_flashInterrupts( int _level );
 
-void
+__attribute__((fastcall)) void
 virt_openInterrupts( void );
 
-void
+__attribute__((fastcall)) void
 virt_closeInterrupts( void );
 
-int
+__attribute__((fastcall)) int
 virt_getInterruptLevel( int _level );
 
 
@@ -43,13 +43,13 @@ virt_getInterruptLevel( int _level );
  * @brief Lowest priority thread, doing nothing, never returns;
  */
 
-void
+__attribute__((fastcall)) void
 virt_idleThread( void );
 
 
 /* Error handling */
 
-void
+__attribute__((fastcall)) void
 virt_execStopError( int _error );
 
 #endif /* ASM */

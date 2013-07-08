@@ -7,6 +7,9 @@ comments: false
 How the heck can I debug this monster? I can show you how to survive at least a
 couple of minutes.
 
+<!--more-->
+
+
 ## POK Partitions and GDB 
 
 How a POK partition can be debugged in general can be read in the POK

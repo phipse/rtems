@@ -7,13 +7,14 @@ The good news first: Hello World runs!
 
 
 To get there you need five steps:
-1. Build the rtems-guest example in POK.
-2. Copy libpart.a from rtems-guest/generated-code/cpu/part1/ to
-    c/src/lib/libbsp/i386/virtPok/
-3. Build virtPok bsp
-4. Copy hello binary to POK partition and rebuild kernel binary
-5. make run
 
+1.  Build the rtems-guest example in POK.
+2.  Copy libpart.a part1/ to virtPok/
+3.  Build virtPok BSP
+4.  Copy hello binary to POK partition and rebuild kernel binary
+5.  make run
+
+<!--more-->
 
 ### 1. Build the rtems-guest example
 

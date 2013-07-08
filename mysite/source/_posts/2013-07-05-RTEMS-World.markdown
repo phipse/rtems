@@ -8,6 +8,9 @@ environment. Hence, I introduced a new CPU model called _virtual_ in the i386
 branch of RTEMS, which is equal to the _native_ branch, except sensitive
 instructions like hlt, cli, sli. 
 
+<!--more-->
+
+
 ## score/cpu, libcpu/, virtual, native and the CPU model conditional
 
 In a virtual environment a client is not allowed to halt the CPU or mess with

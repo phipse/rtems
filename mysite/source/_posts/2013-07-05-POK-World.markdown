@@ -7,6 +7,8 @@ I will discuss the POK code and model written to contain the final
 RTEMS-POK-Partition-binary and changes and additions to the build system to
 generate the necessary library.
 
+<!--more-->
+
 
 ## POK libpart
 

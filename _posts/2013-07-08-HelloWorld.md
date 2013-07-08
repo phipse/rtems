@@ -1,5 +1,6 @@
 ---
-title: Hello World
+layout: post
+title: Hello World - describing the build process
 ---
 
 The good news first: Hello World runs!
@@ -22,6 +23,7 @@ I assume you have checked out my POK fork and ran make configure.
 * Run make 
 * Change directory to generated-code/cpu/
 * Copy the last line in part1/Makefile and change rules-common in rules-libpart
+* Add libpart to *TARGET*
 * Execute 'make partitions'
 
 

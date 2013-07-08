@@ -4,7 +4,7 @@
   <title><![CDATA[GSoC 2013 - RTEMS Virtualization Layer Project]]></title>
   <link href="http://phipse.github.io/rtems/atom.xml" rel="self"/>
   <link href="http://phipse.github.io/rtems/"/>
-  <updated>2013-07-08T20:04:58+02:00</updated>
+  <updated>2013-07-08T20:28:37+02:00</updated>
   <id>http://phipse.github.io/rtems/</id>
   <author>
     <name><![CDATA[Philipp Eppelt]]></name>
@@ -20,18 +20,18 @@
     <id>http://phipse.github.io/rtems/blog/2013/07/08/HelloWorld</id>
     <content type="html"><![CDATA[<p>The good news first: Hello World runs!</p>
 
-<p>To get there you need five steps:
-1. Build the rtems-guest example in POK.
-2. Copy libpart.a from rtems-guest/generated-code/cpu/part1/ to</p>
-
-<pre><code>c/src/lib/libbsp/i386/virtPok/
-</code></pre>
+<p>To get there you need five steps:</p>
 
 <ol>
-<li>Build virtPok bsp</li>
+<li>Build the rtems-guest example in POK.</li>
+<li>Copy libpart.a part1/ to virtPok/</li>
+<li>Build virtPok BSP</li>
 <li>Copy hello binary to POK partition and rebuild kernel binary</li>
 <li>make run</li>
 </ol>
+
+
+<!--more-->
 
 
 <h3>1. Build the rtems-guest example</h3>
@@ -124,6 +124,9 @@ even if your ELF binary is using different memory sizes.</p>
     <content type="html"><![CDATA[<p>How the heck can I debug this monster? I can show you how to survive at least a
 couple of minutes.</p>
 
+<!--more-->
+
+
 <h2>POK Partitions and GDB</h2>
 
 <p>How a POK partition can be debugged in general can be read in the POK
@@ -170,6 +173,9 @@ But maybe you get lucky.</p>
 environment. Hence, I introduced a new CPU model called <em>virtual</em> in the i386
 branch of RTEMS, which is equal to the <em>native</em> branch, except sensitive
 instructions like hlt, cli, sli.</p>
+
+<!--more-->
+
 
 <h2>score/cpu, libcpu/, virtual, native and the CPU model conditional</h2>
 
@@ -236,6 +242,9 @@ call virt_charWrite(), defined in virtLayerBSP.h.</p>
     <content type="html"><![CDATA[<p>I will discuss the POK code and model written to contain the final
 RTEMS-POK-Partition-binary and changes and additions to the build system to
 generate the necessary library.</p>
+
+<!--more-->
+
 
 <h2>POK libpart</h2>
 

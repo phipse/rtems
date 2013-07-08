@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
+    <url>
+        <loc>http://phipse.github.io/rtems//blog/2013/07/08/HelloWorld/</loc>
+        <lastmod>2013-07-08T19:27:27+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://phipse.github.io/rtems//blog/2013/07/08/Modeling-the-partition/</loc>
+        <lastmod>2013-07-08T19:25:43+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://phipse.github.io/rtems//blog/2013/07/08/POK-World/</loc>
+        <lastmod>2013-07-08T19:25:10+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://phipse.github.io/rtems//blog/2013/07/08/RTEMS-World/</loc>
+        <lastmod>2013-07-08T19:24:38+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://phipse.github.io/rtems//blog/2013/07/08/GDB-hell/</loc>
+        <lastmod>2013-07-08T19:12:32+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://phipse.github.io/rtems//blog/archives/</loc>
+        <lastmod>2013-07-08T19:27:27+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://phipse.github.io/rtems//</loc>
+        <lastmod>2013-07-08T19:27:27+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://phipse.github.io/rtems//robots.txt</loc>
+        <lastmod>2013-07-08T18:57:59+02:00</lastmod>
+    </url>
+</urlset>

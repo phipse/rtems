@@ -3,38 +3,114 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
     <title>Rtems by phipse</title>
   </head>
 
   <body>
+    <div id="container">
+      <div class="inner">
 
-    <header>
-      <div class="container">
-        <h1>Rtems</h1>
-        <h2>Kernel, networking, file-systems, drivers, BSPs, samples, and testsuite.</h2>
+        <header>
+          <h1>Rtems</h1>
+          <h2>Kernel, networking, file-systems, drivers, BSPs, samples, and testsuite.</h2>
+        </header>
 
-        <section id="downloads">
-          <a href="https://github.com/phipse/rtems/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/phipse/rtems/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/phipse/rtems" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/phipse/rtems/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/phipse/rtems/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/phipse/rtems" id="view-on-github" class="button"><span>View on GitHub</span></a>
         </section>
-      </div>
-    </header>
 
-    <div class="container">
-      <section id="main_content">
-        <h3>
-<a name="welcome-to-the-rtems-virtualization-layer-google-summer-of-code-project" class="anchor" href="#welcome-to-the-rtems-virtualization-layer-google-summer-of-code-project"><span class="octicon octicon-link"></span></a>Welcome to the RTEMS virtualization layer Google Summer of Code project.</h3>
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="welcome-to-the-rtems-virtualization-layer-google-summer-of-code-project" class="anchor" href="#welcome-to-the-rtems-virtualization-layer-google-summer-of-code-project"><span class="octicon octicon-link"></span></a>Welcome to the RTEMS virtualization layer Google Summer of Code project.</h1>
 
 <p>This page will hold information about status, configuration and build process. </p>
-      </section>
-    </div>
 
-    
+<h1>
+<a name="the-good-news-first-hello-world-runs" class="anchor" href="#the-good-news-first-hello-world-runs"><span class="octicon octicon-link"></span></a>The good news first: Hello World runs!</h1>
+
+<p>To get there you need five steps:
+1. Build the rtems-guest example in POK.
+2. Copy libpart.a from rtems-guest/generated-code/cpu/part1/ to
+    c/src/lib/libbsp/i386/virtPok/
+3. Build virtPok bsp
+4. Copy hello binary to POK partition and rebuild kernel binary
+5. make run</p>
+
+<h3>
+<a name="1-build-the-rtems-guest-example" class="anchor" href="#1-build-the-rtems-guest-example"><span class="octicon octicon-link"></span></a>1. Build the rtems-guest example</h3>
+
+<p>I assume you have checked out my POK fork and ran make configure.</p>
+
+<ul>
+<li>Change directory to ${POK}/examples/rtems-guest/</li>
+<li>Run make </li>
+<li>Change directory to generated-code/cpu/</li>
+<li>Copy the last line in part1/Makefile and change rules-common in rules-libpart</li>
+<li>Execute 'make partitions'</li>
+</ul><h3>
+<a name="2-copy-libparta" class="anchor" href="#2-copy-libparta"><span class="octicon octicon-link"></span></a>2. Copy libpart.a</h3>
+
+<p>The last step created a library file called libpart.a in part1/ directory.
+This file must be moved to RTEMS.</p>
+
+<p>cp ${POK}/examples/rtems-guest/generated-code/cpu/part1/libpart.a \
+  ${RTEMS}/c/src/lib/libbsp/i386/virtPok/</p>
+
+<h3>
+<a name="3-build-rtems" class="anchor" href="#3-build-rtems"><span class="octicon octicon-link"></span></a>3. Build RTEMS</h3>
+
+<p>Now you are ready to build RTEMS with the virtPok BSP.</p>
+
+<ul>
+<li>Create a build directory next to your RTEMS directory, I assume it is called
+'b-virtPok'.</li>
+<li>cd b-virtPok</li>
+<li>Configure RTEMS with the following:
+../rtems/configure --target=i386-rtems4.11 --enable-rtemsbsp=virtPok --enable-cxx --disable-networking --disable-posix --enable-maintainer-mode</li>
+<li>make </li>
+</ul><p>This process will sucessfully build the hello sample, but will fail on the next
+one.</p>
+
+<h3>
+<a name="4-copy-hello-sample-elf-and-build-the-final-kernel-binary-again" class="anchor" href="#4-copy-hello-sample-elf-and-build-the-final-kernel-binary-again"><span class="octicon octicon-link"></span></a>4. Copy hello sample elf and build the final kernel binary again</h3>
+
+<p>The compiled binary is ready to be run as a partition on POK.</p>
+
+<p>Copy the compiled hello.exe ELF binary to replace the partition binary.</p>
+
+<p>cp ${Builddir}/virtPok-i386/c/virtPok/testsuite/samples/hello/hello.exe \
+    ${POK}/examples/rtems-guest/generated-code/cpu/part1/part1.elf</p>
+
+<p>Now we need to generate the partition table again and link the kernel binary
+again:</p>
+
+<ul>
+<li>cd ${POK}/examples/rtems-guest/generated-code/cpu/</li>
+<li>make build-kernel</li>
+</ul><h3>
+<a name="5-run-qemu" class="anchor" href="#5-run-qemu"><span class="octicon octicon-link"></span></a>5. Run qemu</h3>
+
+<p>Change your directory to ${POK}/examples/rtems-guest/ and execute 'make run'.</p>
+        </section>
+
+        <footer>
+          Rtems is maintained by <a href="https://github.com/phipse">phipse</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
   </body>
 </html>

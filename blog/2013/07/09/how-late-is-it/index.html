@@ -1,24 +1,98 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[GSoC 2013 - RTEMS Virtualization Layer Project]]></title>
-  <link href="http://phipse.github.io/rtems/atom.xml" rel="self"/>
-  <link href="http://phipse.github.io/rtems/"/>
-  <updated>2013-07-09T10:11:11+02:00</updated>
-  <id>http://phipse.github.io/rtems/</id>
-  <author>
-    <name><![CDATA[Philipp Eppelt]]></name>
-    
-  </author>
-  <generator uri="http://octopress.org/">Octopress</generator>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>How late is it? - GSoC 2013 - RTEMS Virtualization Layer Project</title>
+  <meta name="author" content="Philipp Eppelt">
 
   
-  <entry>
-    <title type="html"><![CDATA[How late is it?]]></title>
-    <link href="http://phipse.github.io/rtems/blog/2013/07/09/how-late-is-it/"/>
-    <updated>2013-07-09T00:00:00+02:00</updated>
-    <id>http://phipse.github.io/rtems/blog/2013/07/09/how-late-is-it</id>
-    <content type="html"><![CDATA[<p>The big question is: How can we pass the time to RTEMS?
+  <meta name="description" content="The big question is: How can we pass the time to RTEMS?
+POK doesn&rsquo;t provide a mechanism to pass time to a partition, however, the partition can &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://phipse.github.io/rtems/blog/2013/07/09/how-late-is-it">
+  <link href="/rtems/favicon.png" rel="icon">
+  <link href="/rtems/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/rtems/atom.xml" rel="alternate" title="GSoC 2013 - RTEMS Virtualization Layer Project" type="application/atom+xml">
+  <script src="/rtems/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/rtems/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/rtems/">GSoC 2013 - RTEMS Virtualization Layer Project</a></h1>
+  
+    <h2>Progress, Issues, Design</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/rtems/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:phipse.github.io/rtems" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/rtems/">Blog</a></li>
+  <li><a href="/rtems/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">How Late Is It?</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-09T00:00:00+02:00" pubdate data-updated="true">Jul 9<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>The big question is: How can we pass the time to RTEMS?
 POK doesn&rsquo;t provide a mechanism to pass time to a partition, however, the partition can
 ask how late it is. But this doesn&rsquo;t help. Hence, we need to design a new
 mechanism in POK and RTEMS to let the two work together.</p>
@@ -253,272 +327,134 @@ interrupts. As mentioned above this needs to be discussed.</p>
 
 <p>During this time warp deadlines might be missed, but this is more a matter of
 system design, than of wrong behavior on the time side.</p>
-]]></content>
-  </entry>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
   
-  <entry>
-    <title type="html"><![CDATA[Hello World - describing the build process]]></title>
-    <link href="http://phipse.github.io/rtems/blog/2013/07/08/HelloWorld/"/>
-    <updated>2013-07-08T00:00:00+02:00</updated>
-    <id>http://phipse.github.io/rtems/blog/2013/07/08/HelloWorld</id>
-    <content type="html"><![CDATA[<p>The good news first: Hello World runs!</p>
 
-<p>To get there you need five steps:</p>
+<span class="byline author vcard">Posted by <span class="fn">Philipp Eppelt</span></span>
 
-<ol>
-<li>Build the rtems-guest example in POK.</li>
-<li>Copy libpart.a part1/ to virtPok/</li>
-<li>Build virtPok BSP</li>
-<li>Copy hello binary to POK partition and rebuild kernel binary</li>
-<li>make run</li>
-</ol>
+      
 
 
-<!--more-->
 
 
-<h3>1. Build the rtems-guest example</h3>
-
-<p>I assume you have checked out my POK fork and ran make configure.</p>
-
-<ul>
-<li>Change directory to ${POK}/examples/rtems-guest/</li>
-<li>Run make</li>
-<li>Change directory to generated-code/cpu/</li>
-<li>Copy the last line in part1/Makefile and change rules-common in rules-libpart</li>
-<li>Add libpart to <em>TARGET</em></li>
-<li>Execute &lsquo;make partitions&rsquo;</li>
-</ul>
 
 
-<h3>2. Copy libpart.a</h3>
-
-<p>The last step created a library file called libpart.a in part1/ directory.
-This file must be moved to RTEMS.</p>
-
-<p>cp ${POK}/examples/rtems-guest/generated-code/cpu/part1/libpart.a \
-  ${RTEMS}/c/src/lib/libbsp/i386/virtPok/</p>
-
-<h3>3. Build RTEMS</h3>
-
-<p>Now you are ready to build RTEMS with the virtPok BSP.</p>
-
-<ul>
-<li>Create a build directory next to your RTEMS directory, I assume it is called
-&lsquo;b-virtPok&rsquo;.</li>
-<li>cd b-virtPok</li>
-<li>Configure RTEMS with the following:
-../rtems/configure &mdash;target=i386-rtems4.11 &mdash;enable-rtemsbsp=virtPok &mdash;enable-cxx &mdash;disable-networking &mdash;disable-posix &mdash;enable-maintainer-mode</li>
-<li>make</li>
-</ul>
 
 
-<p>This process will sucessfully build the hello sample, but will fail on the next
-one.</p>
-
-<h3>4. Copy hello sample elf and build the final kernel binary again</h3>
-
-<p>The compiled binary is ready to be run as a partition on POK.</p>
-
-<p>Copy the compiled hello.exe ELF binary to replace the partition binary.</p>
-
-<p>cp ${Builddir}/virtPok-i386/c/virtPok/testsuite/samples/hello/hello.exe \</p>
-
-<pre><code>${POK}/examples/rtems-guest/generated-code/cpu/part1/part1.elf
-</code></pre>
-
-<p>Now we need to generate the partition table again and link the kernel binary
-again:</p>
-
-<ul>
-<li>cd ${POK}/examples/rtems-guest/generated-code/cpu/</li>
-<li>make build-kernel</li>
-</ul>
-
-
-<h3>5. Run qemu</h3>
-
-<p>Change your directory to ${POK}/examples/rtems-guest/ and execute &lsquo;make run&rsquo;.</p>
-]]></content>
-  </entry>
   
-  <entry>
-    <title type="html"><![CDATA[Memory partition and pointers]]></title>
-    <link href="http://phipse.github.io/rtems/blog/2013/07/07/Modeling-the-partition/"/>
-    <updated>2013-07-07T00:00:00+02:00</updated>
-    <id>http://phipse.github.io/rtems/blog/2013/07/07/Modeling-the-partition</id>
-    <content type="html"><![CDATA[<p>I had the issue, that the file POK uses as buffer to tell the kernel what to
-print on the screen, was outside of the partition. Well, outside as in the
-filepointer was pointing to a memory location, which was outside the memory
-slice configured in the AADL model (model.aadl).
-So when modelling the partition, that should contain the guest, keep in mind to
-define enough memory for the binary.</p>
 
-<p>As you can see the kernel uses the model.aadl parameters to check the partition,
-even if your ELF binary is using different memory sizes.</p>
-]]></content>
-  </entry>
+
+<time datetime="2013-07-09T00:00:00+02:00" pubdate data-updated="true">Jul 9<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
   
-  <entry>
-    <title type="html"><![CDATA[GDB hell - maybe you get lucky]]></title>
-    <link href="http://phipse.github.io/rtems/blog/2013/07/07/GDB-hell/"/>
-    <updated>2013-07-07T00:00:00+02:00</updated>
-    <id>http://phipse.github.io/rtems/blog/2013/07/07/GDB-hell</id>
-    <content type="html"><![CDATA[<p>How the heck can I debug this monster? I can show you how to survive at least a
-couple of minutes.</p>
-
-<!--more-->
-
-
-<h2>POK Partitions and GDB</h2>
-
-<p>How a POK partition can be debugged in general can be read in the POK
-Developer Documentation included in the repository.</p>
-
-<p>I assume you have build POK, build RTEMS with the library provided by the POK
-partition, injected the RTEMS binary as part1.elf into POK and build the kernel
-again.</p>
-
-<p>So you execute <em>make run-gdb</em> in rtems-guest/. Qemu will be started and pauses
-before it starts the guest aka POK.
-Now go to generated-code/cpu/ (just to shorten filenames, not necessary) and:
-* Invoke <em>gdb pok.elf</em>.
-* Connect to the target <em>target remote :1234</em>
-* break pok_loader_load_partition  // tab completion can be used
-* continue
-* do some single stepping until
-* p pok_partitions[0].base_addr contains something != 0
-* add_symbol_file part1/part1.elf pok_partitions[0].base_addr and confirm
-now you can set breakpoints on functions in POK and RTEMS, e.g.:
-* b bsp_start
-* b virt_charWrite
-* b printf
-* b my_fflush
-* b pok_core_syscall</p>
-
-<p><em>symbol-file part1/part1.elf</em> will swap pok.elf for part1/part1.elf; now the
-function names from the RTEMS partition are shown. You can swap part1.elf with
-pok.elf when you enter the kernel.</p>
-
-<p>Unfortunately, next and single don&rsquo;t work, but si and ni do.
-The backtrace command <em>bt</em> will most likely just show you the current function
-and not the previous one. It will just be 0x00000 &hellip; .
-But maybe you get lucky.</p>
-]]></content>
-  </entry>
   
-  <entry>
-    <title type="html"><![CDATA[RTEMS i386 split - How to support a virtualized CPU]]></title>
-    <link href="http://phipse.github.io/rtems/blog/2013/07/05/RTEMS-World/"/>
-    <updated>2013-07-05T00:00:00+02:00</updated>
-    <id>http://phipse.github.io/rtems/blog/2013/07/05/RTEMS-World</id>
-    <content type="html"><![CDATA[<p>There are several x86 instructions that are not allowed in a virtualized
-environment. Hence, I introduced a new CPU model called <em>virtual</em> in the i386
-branch of RTEMS, which is equal to the <em>native</em> branch, except sensitive
-instructions like hlt, cli, sli.</p>
-
-<!--more-->
-
-
-<h2>score/cpu, libcpu/, virtual, native and the CPU model conditional</h2>
-
-<p>In a virtual environment a client is not allowed to halt the CPU or mess with
-the interrupt flag. Therefore, we need a CPU model avoiding these instructions
-and using a different way to tell the hypervisor, to not deliver interrupts.</p>
-
-<p>In RTEMS several CPU models can be provided for one architecture in the libcpu/
-directory. Therefore the BSP defines a flag <strong>RTEMS_CPU_MODEL</strong> in the BSP&rsquo;s
-config file, e.g. libbsp/i386/virtPok/make/custom/virtPok.cfg.
-In libcpu the configure.ac file contains a check for the RTEMS_CPU_MODEL name
-and defines a variable usable in Makefile.am.
-Using this method different CPU models of the same architecture can be defined.</p>
-
-<p>In my configuration RTEMS_CPU_MODEL=virt-pok and the variable generated by
-configure.ac is <em>VIRT_POK</em>. The Makefile branches conditionally depending on
-this variable, choosing a different directory: <em>native</em> or <em>virtual</em>.</p>
-
-<p>cpukit/score/cpu/i386/ contains the basic architecture files. In this directory
-no function containing a sensitive instruction is allowed. A list of the
-functions and in which files they are can be found
-<a href="http://wiki.rtems.org/wiki/index.php/GSOC_2013_-_Paravirtualization_of_RTEMS">on the wiki page</a>.</p>
-
-<p>I moved these functions to new files and placed the files containing the
-original functions in the <em>native</em> branch of the libcpu/i386/ directory and
-modified the <em>virtual</em> functions to use the virtualization layer functions
-defined in virtLayerCPU.h.</p>
-
-<h2>virtPok BSP</h2>
-
-<p>Actually this BSP could also be named virtualBSP or hypervisorBSP, as at the
-end all calls to the hardware should instead go to the virtualization layer &ndash;
-virtLayerBSP.h. So it is not dependent on the used host system.</p>
-
-<p>virtPok/include contains both header files: virtLayerCPU.h and virtLayerBSP.h.
-Both header files must be considered in Makefile.am and are therefore added to
-<em>include_HEADERS</em>.
-The most interesting part in Makefile.am is the rule to append the library
-provided by the host: <strong>libpart.a</strong>, to libbsp.a. Unfortunately, libpok.a can&rsquo;t
-be appended right away. Instead it must be extracted, the .lo files need to be
-renamed to .o files and then all .o files from libpart.a can be appended to
-libbsp.a.</p>
-
-<p>This BSP doesn&rsquo;t need to initialize hardware, so the start/_start.S code is
-much shorter than on actual hardware. Basically, it just provides the entry
-point calling boot_card() and if that returns a call to bsp_reset.</p>
-
-<p><em>linkcmds</em> is much more interesting, as it has to ensure POK gets a binary file
-it recognizes. Therefore, ENTRY(start) is set. The rest is the same as in
-pc386, but some changes will be made in the future.</p>
-
-<p>The last part considered up to now is the console. As HelloWorld wants to write
-to the screen, we need a working console driver. However, we cannot make any
-assumptions about the hardware. Hence, if we want to write to the console, we
-call virt_charWrite(), defined in virtLayerBSP.h.</p>
-]]></content>
-  </entry>
   
-  <entry>
-    <title type="html"><![CDATA[POK Model and changes to the build system]]></title>
-    <link href="http://phipse.github.io/rtems/blog/2013/07/05/POK-World/"/>
-    <updated>2013-07-05T00:00:00+02:00</updated>
-    <id>http://phipse.github.io/rtems/blog/2013/07/05/POK-World</id>
-    <content type="html"><![CDATA[<p>I will discuss the POK code and model written to contain the final
-RTEMS-POK-Partition-binary and changes and additions to the build system to
-generate the necessary library.</p>
+</div>
 
-<!--more-->
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/rtems/blog/2013/07/08/HelloWorld/" title="Previous Post: Hello World - describing the build process">&laquo; Hello World - describing the build process</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
+</div>
 
-<h2>POK libpart</h2>
-
-<p>Up to now POK does not generate a library containing all object files of one
-partition, referring to everything in libpok.a and the user defined code
-(hello.c). This is done by adding a new makefile target called libpart.</p>
-
-<p>It will build a library libpart.a containing all object files generated by the
-user code and all generated files from libpok.a and resides in each partitions
-directory.</p>
-
-<p>However, up to now you have to add it by hand to part1/Makefile after invoking
-<em>make</em> in the projects root directory (rtems-guest), the ocarina run overwrites
-changes to any file in generated-code. Details in <strong>HelloWorld &ndash; describing the
-link process</strong>.</p>
-
-<h2>POK example code</h2>
-
-<p>I used the <em>partitioned-threads</em> example as a starting point for my
-<em>rtems-guest</em> code. Additionally the header files describing the RTEMS
-virtualization layer are copied, namely virtLayerBSP.h and virtLayerCPU.h.
-The model.aadl (model) is reduced to generate only one partition.
-The hello.c file includes the virtLayer*.h files and implements the defined
-functions.</p>
-
-<p>Assuming that POK is configured and the $POK_PATH is set <em>make</em> will check
-model and user code and generate the partition and kernel accordingly.</p>
-
-<p>To ensure that POK and RTEMS are using the same calling convention every
-function in the virtualization layer has the attribute <strong>fastcall</strong>.</p>
-]]></content>
-  </entry>
+<aside class="sidebar">
   
-</feed>
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/rtems/blog/2013/07/09/how-late-is-it/">How Late Is It?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/rtems/blog/2013/07/08/HelloWorld/">Hello World - Describing the Build Process</a>
+      </li>
+    
+      <li class="post">
+        <a href="/rtems/blog/2013/07/07/Modeling-the-partition/">Memory Partition and Pointers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/rtems/blog/2013/07/07/GDB-hell/">GDB Hell - Maybe You Get Lucky</a>
+      </li>
+    
+      <li class="post">
+        <a href="/rtems/blog/2013/07/05/RTEMS-World/">RTEMS I386 Split - How to Support a Virtualized CPU</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/phipse">@phipse</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'phipse',
+            count: 5,
+            skip_forks: false,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/rtems/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Philipp Eppelt -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

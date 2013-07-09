@@ -9,8 +9,8 @@
   <meta name="author" content="Philipp Eppelt">
 
   
-  <meta name="description" content="The good news first: Hello World runs! To get there you need five steps: Build the rtems-guest example in POK.
-Copy libpart.a part1/ to virtPok/ &hellip;">
+  <meta name="description" content="The big question is: How can we pass the time to RTEMS?
+POK doesn&rsquo;t provide a mechanism to pass time to a partition, however, the partition can &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +66,52 @@ Copy libpart.a part1/ to virtPok/ &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/rtems/blog/2013/07/09/how-late-is-it/">How Late Is It?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-09T00:00:00+02:00" pubdate data-updated="true">Jul 9<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The big question is: How can we pass the time to RTEMS?
+POK doesn&rsquo;t provide a mechanism to pass time to a partition, however, the partition can
+ask how late it is. But this doesn&rsquo;t help. Hence, we need to design a new
+mechanism in POK and RTEMS to let the two work together.</p>
+
+<p><em>Caution</em>: This is a very long post!</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/rtems/blog/2013/07/09/how-late-is-it/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -305,6 +351,10 @@ generate the necessary library.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/rtems/blog/2013/07/09/how-late-is-it/">How Late Is It?</a>
+      </li>
+    
+      <li class="post">
         <a href="/rtems/blog/2013/07/08/HelloWorld/">Hello World - Describing the Build Process</a>
       </li>
     
@@ -318,10 +368,6 @@ generate the necessary library.</p>
     
       <li class="post">
         <a href="/rtems/blog/2013/07/05/RTEMS-World/">RTEMS I386 Split - How to Support a Virtualized CPU</a>
-      </li>
-    
-      <li class="post">
-        <a href="/rtems/blog/2013/07/05/POK-World/">POK Model and Changes to the Build System</a>
       </li>
     
   </ul>

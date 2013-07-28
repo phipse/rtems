@@ -59,5 +59,5 @@ The current solution is to build libpart under the libpok target and adding the
 $(OBJS) as prerequisite. 
 
 I rebuild the **rtems-guest** example without errors and compared the nm output
-of a former libpart.a with the new one. It was equal. Currently the testcases
-are compiling but so far everything looks good.
+of a former libpart.a with the new one. It was equal. To test if the change
+broke something I ran **make test**. All test cases compiled successfully.

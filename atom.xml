@@ -4,7 +4,7 @@
   <title><![CDATA[GSoC 2013 - RTEMS Virtualization Layer Project]]></title>
   <link href="http://phipse.github.io/rtems/atom.xml" rel="self"/>
   <link href="http://phipse.github.io/rtems/"/>
-  <updated>2013-07-29T10:26:50+02:00</updated>
+  <updated>2013-07-29T10:51:01+02:00</updated>
   <id>http://phipse.github.io/rtems/</id>
   <author>
     <name><![CDATA[Philipp Eppelt]]></name>
@@ -22,6 +22,9 @@
 included in the automatic generation process. First I will discuss where the
 configuration for the generation is done; Second I talk about the reasons, why
 I won&rsquo;t intercept this process and which solution I settled with.</p>
+
+<!--more-->
+
 
 <h2>How Makefiles are generated</h2>
 

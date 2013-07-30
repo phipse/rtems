@@ -41,6 +41,12 @@ arm_cp15_cache_invalidate(void);
 BSP_START_TEXT_SECTION static inline void
 arm_cp15_tlb_invalidate(void);
 
+BSP_START_TEXT_SECTION static inline uint32_t
+arm_cp15_get_multiprocessor_affinity(void);
+
+BSP_START_TEXT_SECTION static inline uint32_t
+arm_cortex_a9_get_multiprocessor_cpu_id(void);
+
 typedef struct {
   uint32_t begin;
   uint32_t end;
@@ -56,17 +62,18 @@ arm_cp15_start_set_translation_table_entries(
   uint32_t i = ARM_MMU_SECT_GET_INDEX(config->begin);
   uint32_t iend =
     ARM_MMU_SECT_GET_INDEX(ARM_MMU_SECT_MVA_ALIGN_UP(config->end));
+  uint32_t index_mask = (1U << (32 - ARM_MMU_SECT_BASE_SHIFT)) - 1U;
 
   if (config->begin != config->end) {
-    while (i < iend) {
+    while (i != iend) {
       ttb [i] = (i << ARM_MMU_SECT_BASE_SHIFT) | config->flags;
-      ++i;
+      i = (i + 1U) & index_mask;
     }
   }
 }
 
-BSP_START_TEXT_SECTION static void
-arm_cp15_start_setup_translation_table_and_enable_mmu(
+BSP_START_TEXT_SECTION static inline void
+arm_cp15_start_setup_translation_table_and_enable_mmu_and_cache(
   uint32_t ctrl,
   uint32_t *ttb,
   uint32_t client_domain,

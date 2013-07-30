@@ -18,14 +18,11 @@
 #include "config.h"
 #endif
 
-#include <rtems/system.h>
-#include <rtems/rtems/status.h>
-#include <rtems/rtems/asr.h>
-#include <rtems/score/isr.h>
-#include <rtems/rtems/modes.h>
-#include <rtems/rtems/signal.h>
-#include <rtems/score/thread.h>
+#include <rtems/rtems/signalimpl.h>
+#include <rtems/rtems/asrimpl.h>
 #include <rtems/rtems/tasks.h>
+#include <rtems/score/isr.h>
+#include <rtems/score/threadimpl.h>
 
 rtems_status_code rtems_signal_send(
   rtems_id          id,
@@ -56,10 +53,10 @@ rtems_status_code rtems_signal_send(
         } else {
           _ASR_Post_signals( signal_set, &asr->signals_pending );
         }
-        _Thread_Enable_dispatch();
+        _Objects_Put( &the_thread->Object );
         return RTEMS_SUCCESSFUL;
       }
-      _Thread_Enable_dispatch();
+      _Objects_Put( &the_thread->Object );
       return RTEMS_NOT_DEFINED;
 
 #if defined(RTEMS_MULTIPROCESSING)

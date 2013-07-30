@@ -18,14 +18,10 @@
 #include "config.h"
 #endif
 
-#include <rtems/system.h>
-#include <rtems/rtems/status.h>
-#include <rtems/rtems/support.h>
-#include <rtems/score/object.h>
-#include <rtems/score/thread.h>
-#include <rtems/rtems/timer.h>
+#include <rtems/rtems/timerimpl.h>
+#include <rtems/rtems/clock.h>
 #include <rtems/score/tod.h>
-#include <rtems/score/watchdog.h>
+#include <rtems/score/watchdogimpl.h>
 
 rtems_status_code rtems_timer_fire_when(
   rtems_id                            id,
@@ -62,7 +58,7 @@ rtems_status_code rtems_timer_fire_when(
          &the_timer->Ticker,
          seconds - _TOD_Seconds_since_epoch()
        );
-      _Thread_Enable_dispatch();
+      _Objects_Put( &the_timer->Object );
       return RTEMS_SUCCESSFUL;
 
 #if defined(RTEMS_MULTIPROCESSING)

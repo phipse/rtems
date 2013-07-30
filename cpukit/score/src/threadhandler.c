@@ -18,22 +18,10 @@
 #include "config.h"
 #endif
 
-#include <rtems/system.h>
-#include <rtems/score/apiext.h>
-#include <rtems/score/context.h>
+#include <rtems/score/threadimpl.h>
 #include <rtems/score/interr.h>
-#include <rtems/score/isr.h>
-#include <rtems/score/object.h>
-#include <rtems/score/priority.h>
-#include <rtems/score/states.h>
-#include <rtems/score/sysstate.h>
-#include <rtems/score/thread.h>
-#include <rtems/score/threadq.h>
+#include <rtems/score/isrlevel.h>
 #include <rtems/score/userextimpl.h>
-#include <rtems/score/wkspace.h>
-#if defined(RTEMS_SMP)
-  #include <rtems/score/smp.h>
-#endif
 
 /*
  *  Conditional magic to determine what style of C++ constructor
@@ -95,6 +83,11 @@ void _Thread_Handler( void )
     #endif
   #endif
 
+  /*
+   * Initialize the floating point context because we do not come
+   * through _Thread_Dispatch on our first invocation. So the normal
+   * code path for performing the FP context switch is not hit.
+   */
   #if ( CPU_HARDWARE_FP == TRUE ) || ( CPU_SOFTWARE_FP == TRUE )
     #if ( CPU_USE_DEFERRED_FP_SWITCH == TRUE )
       if ( (executing->fp_context != NULL) &&
@@ -126,15 +119,14 @@ void _Thread_Handler( void )
      */
     if (doCons) /* && (volatile void *)_init) */ {
       INIT_NAME ();
-   
-      #if defined(RTEMS_SMP)
-        _Thread_Disable_dispatch();
-          _SMP_Request_other_cores_to_perform_first_context_switch();
-        _Thread_Enable_dispatch();
-      #endif
     }
  #endif
 
+  /*
+   *  RTEMS supports multiple APIs and each API can define a different
+   *  thread/task prototype. The following code supports invoking the
+   *  user thread entry point using the prototype expected.
+   */
   if ( executing->Start.prototype == THREAD_START_NUMERIC ) {
     executing->Wait.return_argument =
       (*(Thread_Entry_numeric) executing->Start.entry_point)(

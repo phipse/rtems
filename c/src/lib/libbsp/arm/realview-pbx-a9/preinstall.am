@@ -94,6 +94,10 @@ $(PROJECT_INCLUDE)/bsp/arm-a9mpcore-regs.h: ../shared/include/arm-a9mpcore-regs.
 	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-a9mpcore-regs.h
 PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-a9mpcore-regs.h
 
+$(PROJECT_INCLUDE)/bsp/arm-a9mpcore-start.h: ../shared/include/arm-a9mpcore-start.h $(PROJECT_INCLUDE)/bsp/$(dirstamp)
+	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-a9mpcore-start.h
+PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-a9mpcore-start.h
+
 $(PROJECT_INCLUDE)/bsp/arm-cp15-start.h: ../shared/include/arm-cp15-start.h $(PROJECT_INCLUDE)/bsp/$(dirstamp)
 	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-cp15-start.h
 PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-cp15-start.h
@@ -110,6 +114,10 @@ $(PROJECT_INCLUDE)/bsp/arm-gic-regs.h: ../shared/include/arm-gic-regs.h $(PROJEC
 	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-gic-regs.h
 PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-gic-regs.h
 
+$(PROJECT_INCLUDE)/bsp/arm-gic-tm27.h: ../shared/include/arm-gic-tm27.h $(PROJECT_INCLUDE)/bsp/$(dirstamp)
+	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-gic-tm27.h
+PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-gic-tm27.h
+
 $(PROJECT_INCLUDE)/bsp/arm-pl011.h: ../shared/include/arm-pl011.h $(PROJECT_INCLUDE)/bsp/$(dirstamp)
 	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-pl011.h
 PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-pl011.h
@@ -117,6 +125,22 @@ PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-pl011.h
 $(PROJECT_INCLUDE)/bsp/arm-pl011-regs.h: ../shared/include/arm-pl011-regs.h $(PROJECT_INCLUDE)/bsp/$(dirstamp)
 	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-pl011-regs.h
 PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-pl011-regs.h
+
+$(PROJECT_INCLUDE)/bsp/arm-pl050.h: ../shared/include/arm-pl050.h $(PROJECT_INCLUDE)/bsp/$(dirstamp)
+	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-pl050.h
+PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-pl050.h
+
+$(PROJECT_INCLUDE)/bsp/arm-pl050-regs.h: ../shared/include/arm-pl050-regs.h $(PROJECT_INCLUDE)/bsp/$(dirstamp)
+	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-pl050-regs.h
+PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-pl050-regs.h
+
+$(PROJECT_INCLUDE)/bsp/arm-pl111-fb.h: ../shared/include/arm-pl111-fb.h $(PROJECT_INCLUDE)/bsp/$(dirstamp)
+	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-pl111-fb.h
+PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-pl111-fb.h
+
+$(PROJECT_INCLUDE)/bsp/arm-pl111-regs.h: ../shared/include/arm-pl111-regs.h $(PROJECT_INCLUDE)/bsp/$(dirstamp)
+	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/arm-pl111-regs.h
+PREINSTALL_FILES += $(PROJECT_INCLUDE)/bsp/arm-pl111-regs.h
 
 $(PROJECT_INCLUDE)/bsp/irq.h: include/irq.h $(PROJECT_INCLUDE)/bsp/$(dirstamp)
 	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bsp/irq.h

@@ -168,7 +168,11 @@ extern "C" {
  * On the SPARC, we can disable the FPU for integer only tasks so
  * it is safe to defer floating point context switches.
  */
-#define CPU_USE_DEFERRED_FP_SWITCH       TRUE
+#if defined(RTEMS_SMP)
+  #define CPU_USE_DEFERRED_FP_SWITCH FALSE
+#else
+  #define CPU_USE_DEFERRED_FP_SWITCH TRUE
+#endif
 
 /**
  * Does this port provide a CPU dependent IDLE task implementation?
@@ -1186,23 +1190,19 @@ void _CPU_Context_restore(
     Context_Control *new_context
   );
 
-  /**
-   * Macro to access memory and bypass the cache.
-   *
-   * NOTE: address space 1 is uncacheable
-   */
-  #define SMP_CPU_SWAP( _address, _value, _previous ) \
-    do { \
-      register unsigned int _val = _value; \
-      asm volatile( \
-        "swapa [%2] %3, %0" : \
-        "=r" (_val) : \
-        "0" (_val), \
-        "r" (_address), \
-        "i" (1) \
-      ); \
-      _previous = _val; \
-    } while (0)
+  RTEMS_COMPILER_PURE_ATTRIBUTE uint32_t _CPU_SMP_Get_current_processor( void );
+
+  void _CPU_SMP_Send_interrupt( uint32_t target_processor_index );
+
+  static inline void _CPU_SMP_Processor_event_broadcast( void )
+  {
+    __asm__ volatile ( "" : : : "memory" );
+  }
+
+  static inline void _CPU_SMP_Processor_event_receive( void )
+  {
+    __asm__ volatile ( "" : : : "memory" );
+  }
 #endif
 
 /**
@@ -1226,6 +1226,18 @@ void _CPU_Context_save_fp(
 void _CPU_Context_restore_fp(
   Context_Control_fp **fp_context_ptr
 );
+
+static inline void _CPU_Context_volatile_clobber( uintptr_t pattern )
+{
+  /* TODO */
+}
+
+static inline void _CPU_Context_validate( uintptr_t pattern )
+{
+  while (1) {
+    /* TODO */
+  }
+}
 
 typedef struct {
   uint32_t trap;

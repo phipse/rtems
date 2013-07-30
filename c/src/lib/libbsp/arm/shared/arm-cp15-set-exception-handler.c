@@ -18,8 +18,7 @@
 
 void arm_cp15_set_exception_handler(
   Arm_symbolic_exception_name exception,
-  void (*handler)(void),
-  uint32_t section_flags_for_mirror_table_access
+  void (*handler)(void)
 )
 {
   if ((unsigned) exception < MAX_EXCEPTIONS) {
@@ -38,7 +37,15 @@ void arm_cp15_set_exception_handler(
       ctrl = arm_cp15_mmu_disable(cls);
 
       mirror_table[exception] = (uint32_t) handler;
+
       rtems_cache_flush_multiple_data_lines(mirror_table, table_size);
+
+      /*
+       * On ARMv7 processors with the Security Extension the mirror table might
+       * be the actual table used by the processor.
+       */
+      rtems_cache_invalidate_multiple_instruction_lines(mirror_table, table_size);
+
       rtems_cache_invalidate_multiple_instruction_lines(cpu_table, table_size);
 
       arm_cp15_set_control(ctrl);

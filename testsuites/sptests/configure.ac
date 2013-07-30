@@ -20,13 +20,18 @@ RTEMS_PROG_CC_FOR_TARGET
 
 RTEMS_CANONICALIZE_TOOLS
 
+RTEMS_CHECK_CPUOPTS([RTEMS_ATOMIC])
+
 RTEMS_CHECK_CUSTOM_BSP(RTEMS_BSP)
 
 # FIXME: We should get rid of this. It's a cludge.
 AC_CHECK_SIZEOF([time_t])
 
+AM_CONDITIONAL([ATOMIC],[test x"$rtems_cv_RTEMS_ATOMIC" = xyes])
+
 # Explicitly list all Makefiles here
 AC_CONFIG_FILES([Makefile
+spcontext01/Makefile
 spfatal26/Makefile
 spinternalerror02/Makefile
 spinternalerror01/Makefile
@@ -160,6 +165,7 @@ spfifo02/Makefile
 spfifo03/Makefile
 spfifo04/Makefile
 spfifo05/Makefile
+spfreechain01/Makefile
 spintrcritical01/Makefile
 spintrcritical02/Makefile
 spintrcritical03/Makefile
@@ -187,6 +193,8 @@ spprintk/Makefile
 spprivenv01/Makefile
 spqreslib/Makefile
 sprbtree01/Makefile
+spsem01/Makefile
+spsem02/Makefile
 spsimplesched01/Makefile
 spsimplesched02/Makefile
 spsimplesched03/Makefile

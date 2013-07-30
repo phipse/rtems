@@ -71,7 +71,6 @@
 #define PHYS_TO_VIRTUAL(x)    /* convert physical address "x" to virtual */
 #define VIRTUAL_TO_PHYS(x)    /* convert virtual address "x" to physical */
 #define UDELAY(x)             /* delay roughly at least "x" microsecs */
-#define TEST_BOOTED(x)        /* test bootaddr x to see if CPU started */
 #define READ_MSR_LO(x)        /* Read MSR low function */
 #else
 #include <string.h>
@@ -80,6 +79,7 @@
 #include <rtems/bspsmp.h>
 #include <rtems/bspIo.h>
 #include <libcpu/cpu.h>
+#include <assert.h>
 
 extern void _pc386_delay(void);
 
@@ -121,17 +121,14 @@ static void UDELAY(int x)
   while ( _i-- )
     _pc386_delay();
 }
- 
+
 #define READ_MSR_LO(_x) \
   (unsigned int)(read_msr(_x) & 0xffffffff)
-
-#define TEST_BOOTED(_cpu) \
-  (_Per_CPU_Information[_cpu].state == RTEMS_BSP_SMP_CPU_INITIALIZED)
 
 static inline unsigned long long read_msr(unsigned int msr)
 {
   unsigned long long value;
- 
+
   asm volatile("rdmsr" : "=A" (value) : "c" (msr));
   return value;
 }
@@ -198,6 +195,8 @@ unsigned char imps_apic_cpu_map[IMPS_MAX_CPUS];
 
 /* now defined in getcpuid.c */
 extern unsigned imps_lapic_addr;
+
+static void secondary_cpu_initialize(void);
 
 /*
  *  MPS checksum function
@@ -269,7 +268,7 @@ boot_cpu(imps_processor *proc)
     (size_t)_binary_appstart_bin_size
   );
 
-  reset[1] = (uint32_t)rtems_smp_secondary_cpu_initialize;
+  reset[1] = (uint32_t)secondary_cpu_initialize;
   reset[2] = (uint32_t)_Per_CPU_Information[apicid].interrupt_stack_high;
 
   /*
@@ -306,22 +305,6 @@ boot_cpu(imps_processor *proc)
       send_ipi(apicid, LAPIC_ICR_DM_SIPI | ((bootaddr >> 12) & 0xFF));
       UDELAY(1000);
     }
-  }
-
-  /*
-   *  Check to see if other processor has started.
-   */
-  bsp_smp_wait_for(
-    (volatile unsigned int *)&_Per_CPU_Information[imps_num_cpus].state,
-    RTEMS_BSP_SMP_CPU_INITIALIZED,
-    1600
-  );
-  if ( _Per_CPU_Information[imps_num_cpus].state ==
-        RTEMS_BSP_SMP_CPU_INITIALIZED )
-    printk("#%d  Application Processor (AP)", imps_num_cpus);
-  else {
-    printk("CPU Not Responding, DISABLED");
-    success = 0;
   }
 
   /*
@@ -401,9 +384,9 @@ imps_read_config_table(unsigned start, int count)
   while (count-- > 0) {
     switch (*((unsigned char *)start)) {
     case IMPS_BCT_PROCESSOR:
-      if ( imps_num_cpus < rtems_configuration_smp_maximum_processors ) {
+      if ( imps_num_cpus < rtems_configuration_get_maximum_processors() ) {
 	add_processor((imps_processor *)start);
-      } else 
+      } else
         imps_num_cpus++;
       start += 12;  /* 20 total */
       break;
@@ -428,13 +411,13 @@ imps_read_config_table(unsigned start, int count)
     }
     start += 8;
   }
-  if ( imps_num_cpus > rtems_configuration_smp_maximum_processors ) {
+  if ( imps_num_cpus > rtems_configuration_get_maximum_processors() ) {
     printk(
       "WARNING!! Found more CPUs (%d) than configured for (%d)!!\n",
       imps_num_cpus - 1,
-      rtems_configuration_smp_maximum_processors
+      rtems_configuration_get_maximum_processors()
     );
-    imps_num_cpus = rtems_configuration_smp_maximum_processors;
+    imps_num_cpus = rtems_configuration_get_maximum_processors();
     return;
   }
 }
@@ -769,22 +752,19 @@ rtems_isr ap_ipi_isr(
 
 #include <rtems/irq.h>
 
-static rtems_irq_connect_data apIPIIrqData = {
-  16,
-  (void *)ap_ipi_isr,
-  0,
-  NULL,            /* On */
-  NULL,            /* Off */
-  NULL,            /* IsOn */
-};
-
 extern void bsp_reset(void);
 void ipi_install_irq(void)
 {
-  if (!BSP_install_rtems_irq_handler (&apIPIIrqData)) {
-    printk("Unable to initialize IPI\n");
-    bsp_reset();
-  }
+  rtems_status_code status;
+
+  status = rtems_interrupt_handler_install(
+    16,
+    "smp-imps",
+    RTEMS_INTERRUPT_UNIQUE,
+    ap_ipi_isr,
+    NULL
+  );
+  assert(status == RTEMS_SUCCESSFUL);
 }
 
 #ifdef __SSE__
@@ -792,7 +772,7 @@ extern void enable_sse(void);
 #endif
 
 /* pc386 specific initialization */
-void bsp_smp_secondary_cpu_initialize(int cpu)
+static void secondary_cpu_initialize(void)
 {
   int apicid;
 
@@ -804,12 +784,12 @@ void bsp_smp_secondary_cpu_initialize(int cpu)
 #ifdef __SSE__
   enable_sse();
 #endif
+
+  rtems_smp_secondary_cpu_initialize();
 }
 
 #include <rtems/bspsmp.h>
-int bsp_smp_initialize(
-  int maximum
-)
+uint32_t bsp_smp_initialize( uint32_t configured_cpu_count )
 {
   int cores;
   /* XXX need to deal with finding too many cores */
@@ -821,44 +801,13 @@ int bsp_smp_initialize(
   return cores;
 }
 
-void bsp_smp_interrupt_cpu(
-  int cpu
-)
+void _CPU_SMP_Send_interrupt( uint32_t target_processor_index )
 {
-  send_ipi( cpu, 0x30 );
+  send_ipi( target_processor_index, 0x30 );
 }
 
 void bsp_smp_broadcast_interrupt(void)
 {
   /* Single broadcast interrupt */
   send_ipi( 0, LAPIC_ICR_DS_ALLEX | 0x30 );
-}
-
-void bsp_smp_wait_for(
-  volatile unsigned int *address,
-  unsigned int           desired,
-  int                    maximum_usecs
-)
-{
-  int iterations;
-  volatile int i;
-  volatile unsigned int *p = (volatile unsigned int *)address;
-
-  for (iterations=0 ;  iterations < maximum_usecs ; iterations++ ) {
-    if ( *p == desired )
-      break;
-    #ifdef __SSE3__
-      __builtin_ia32_monitor( (const void *)address, 0, 0 );
-      if ( *p == desired )
-        break;
-      __builtin_ia32_mwait( 0, 0 );
-    #endif
-
-    /*
-     *  Until i386 ms delay does not depend upon the clock we
-     *  will use this less sophisticated delay. 
-     */
-    for(i=5000; i>0; i--)
-      ;
-  }
 }

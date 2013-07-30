@@ -20,7 +20,7 @@
 #define _RTEMS_SCORE_SCHEDULERPRIORITY_H
 
 #include <rtems/score/chain.h>
-#include <rtems/score/priority.h>
+#include <rtems/score/prioritybitmap.h>
 #include <rtems/score/scheduler.h>
 
 #ifdef __cplusplus
@@ -52,7 +52,8 @@ extern "C" {
     _Scheduler_priority_Extract,          /* extract entry point */ \
     _Scheduler_priority_Priority_compare, /* compares two priorities */ \
     _Scheduler_priority_Release_job,      /* new period of task */ \
-    _Scheduler_priority_Tick              /* tick entry point */ \
+    _Scheduler_default_Tick,              /* tick entry point */ \
+    _Scheduler_default_Start_idle         /* start idle entry point */ \
   }
 
 /**
@@ -144,12 +145,12 @@ void _Scheduler_priority_Unblock(
 );
 
 /**
- *  @brief Remove the running THREAD to the rear of this chain.
+ *  @brief The specified THREAD yields.
  *
  *  This routine is invoked when a thread wishes to voluntarily
  *  transfer control of the processor to another thread in the queue.
  *
- *  This routine will remove the running THREAD from the ready queue
+ *  This routine will remove the specified THREAD from the ready queue
  *  and place it immediately at the rear of this chain.  Reset timeslice
  *  and yield the processor functions both use this routine, therefore if
  *  reset is true and this is the only thread on the queue then the
@@ -159,8 +160,10 @@ void _Scheduler_priority_Unblock(
  *  - INTERRUPT LATENCY:
  *    + ready chain
  *    + select heir
+ *
+ *  @param[in,out] thread The yielding thread.
  */
-void _Scheduler_priority_Yield( void );
+void _Scheduler_priority_Yield( Thread_Control *thread );
 
 /**
  *  @brief Puts @a the_thread on to the priority-based ready queue.
@@ -222,34 +225,11 @@ void _Scheduler_priority_Release_job (
   uint32_t         deadline
 );
 
-/**
- *  @brief Determines if the current thread allows timeslicing.
- *
- *  This routine is invoked as part of processing each clock tick.
- *  It is responsible for determining if the current thread allows
- *  timeslicing and, if so, when its timeslice expires.
- */
-void _Scheduler_priority_Tick( void );
-
-/**
- *  This is the major bit map.
- */
-extern volatile Priority_bit_map_Control _Priority_Major_bit_map;
-
-/**
- *  This is the minor bit map.
- */
-extern Priority_bit_map_Control _Priority_Bit_map[16] CPU_STRUCTURE_ALIGNMENT;
-
-#ifndef __RTEMS_APPLICATION__
-#include <rtems/score/schedulerpriority.inl>
-#endif
+/**@}*/
 
 #ifdef __cplusplus
 }
 #endif
-
-/**@}*/
 
 #endif
 /* end of include file */

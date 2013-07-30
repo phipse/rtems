@@ -18,27 +18,23 @@
 #include "config.h"
 #endif
 
-#include <rtems/system.h>
+#include <rtems/score/schedulersimpleimpl.h>
 #include <rtems/score/isr.h>
-#include <rtems/score/scheduler.h>
-#include <rtems/score/thread.h>
-#include <rtems/score/schedulersimple.h>
+#include <rtems/score/threadimpl.h>
 
-void _Scheduler_simple_Yield( void )
+void _Scheduler_simple_Yield( Thread_Control *thread )
 {
   ISR_Level       level;
-  Thread_Control *executing;
 
-  executing = _Thread_Executing;
   _ISR_Disable( level );
 
-    _Scheduler_simple_Ready_queue_requeue(&_Scheduler, executing);
+    _Scheduler_simple_Ready_queue_requeue( &_Scheduler, thread );
 
     _ISR_Flash( level );
 
     _Scheduler_simple_Schedule();
 
-    if ( !_Thread_Is_heir( executing ) )
+    if ( !_Thread_Is_heir( thread ) )
       _Thread_Dispatch_necessary = true;
 
   _ISR_Enable( level );

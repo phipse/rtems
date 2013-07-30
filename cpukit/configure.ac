@@ -149,6 +149,7 @@ RTEMS_CHECK_MULTIPROCESSING
 RTEMS_CHECK_POSIX_API
 RTEMS_CHECK_NETWORKING
 RTEMS_CHECK_SMP
+RTEMS_CHECK_ATOMIC
 
 rtems_major=`echo _RTEMS_VERSION | sed "s/\..*//"`
 rtems_minor=`echo _RTEMS_VERSION | sed "s/[[0-9]][[0-9]]*\.//;s/\..*//"`
@@ -185,6 +186,11 @@ RTEMS_CPUOPT([RTEMS_NETWORKING],
   [test x"$rtems_cv_HAS_NETWORKING" = xyes],
   [1],
   [if networking is enabled])
+
+RTEMS_CPUOPT([RTEMS_ATOMIC],
+  [test x"$rtems_cv_ATOMIC" = xyes],
+  [1],
+  [if cpu supports atomic operations])
 
 RTEMS_CPUOPT([RTEMS_VERSION],
   [true],
@@ -274,6 +280,8 @@ AC_CHECK_SIZEOF([off_t])
 # FIXME: We should get rid of this. It's a cludge.
 AC_CHECK_SIZEOF([time_t])
 
+AC_CHECK_SIZEOF([size_t])
+
 # FIXME: Mandatory in SUSv4, optional in SUSv3. 
 #   Not implemented in GCC/newlib, so far.
 AC_CHECK_DECLS([WORD_BIT],,,[#include <limits.h>])
@@ -304,11 +312,14 @@ AM_CONDITIONAL(HAS_SMP,[test "$RTEMS_HAS_SMP" = "yes"])
 
 AM_CONDITIONAL(HAS_PTHREADS,test x"$rtems_cv_HAS_POSIX_API" = x"yes")
 AM_CONDITIONAL(LIBNETWORKING,test x"$rtems_cv_HAS_NETWORKING" = x"yes")
+AM_CONDITIONAL([ATOMIC],[test x"$rtems_cv_ATOMIC" = x"yes"])
 
 AM_CONDITIONAL([LIBSHELL],[test x"$HAVE_ASSIGNABLE_STDIO" = x"yes"])
 AM_CONDITIONAL([LIBSERDBG],[test x"$rtems_cv_cc_attribute_weak" = x"yes"])
 AM_CONDITIONAL([LIBGNAT],[test x"$rtems_cv_HAS_POSIX_API" = x"yes" \
 && test x"$enable_ada" = x"yes"])
+
+AM_CONDITIONAL([LIBUTF8PROC],[test $ac_cv_sizeof_size_t -gt 2])
 
 AM_CONDITIONAL([LIBDOSFS],[dnl
 test x"$ac_cv_type_uint8_t" = xyes \

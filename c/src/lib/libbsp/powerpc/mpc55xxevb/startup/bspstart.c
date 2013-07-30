@@ -105,11 +105,11 @@ void bsp_start(void)
 	bsp_clicks_per_usec = bsp_clock_speed / 1000000;
 
 	/* Initialize exceptions */
-	ppc_exc_vector_base = (uint32_t) mpc55xx_exc_vector_base;
-	ppc_exc_initialize(
+	ppc_exc_initialize_with_vector_base(
 		PPC_INTERRUPT_DISABLE_MASK_DEFAULT,
-                (uintptr_t) bsp_section_work_begin,
-                rtems_configuration_get_interrupt_stack_size()
+		(uintptr_t) bsp_section_work_begin,
+		rtems_configuration_get_interrupt_stack_size(),
+		mpc55xx_exc_vector_base
 	);
 	#ifndef PPC_EXC_CONFIG_USE_FIXED_HANDLER
 		ppc_exc_set_handler(ASM_ALIGN_VECTOR, ppc_exc_alignment_handler);
@@ -118,7 +118,10 @@ void bsp_start(void)
 	/* Initialize interrupts */
 	bsp_interrupt_initialize();
 
-	mpc55xx_edma_init();
+	#if MPC55XX_CHIP_FAMILY != 566
+		mpc55xx_edma_init();
+	#endif
+
 	#ifdef MPC55XX_EMIOS_PRESCALER
 		mpc55xx_emios_initialize(MPC55XX_EMIOS_PRESCALER);
 	#endif

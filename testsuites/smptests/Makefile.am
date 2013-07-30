@@ -6,7 +6,6 @@ if SMPTESTS
 SUBDIRS += smp01
 SUBDIRS += smp02
 SUBDIRS += smp03
-SUBDIRS += smp04
 SUBDIRS += smp05
 SUBDIRS += smp06
 SUBDIRS += smp07
@@ -19,6 +18,9 @@ SUBDIRS += smpatomic04
 SUBDIRS += smpatomic05
 SUBDIRS += smpatomic06
 SUBDIRS += smpatomic07
+SUBDIRS += smplock01
+SUBDIRS += smpschedule01
+SUBDIRS += smpunsupported01
 endif
 
 include $(top_srcdir)/../automake/subdirs.am

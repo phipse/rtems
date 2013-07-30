@@ -25,6 +25,9 @@
 #include <inttypes.h>
 
 #include <rtems/cpuuse.h>
+#include <rtems/score/objectimpl.h>
+#include <rtems/score/tod.h>
+#include <rtems/score/watchdogimpl.h>
 
 #ifndef __RTEMS_USE_TICKS_FOR_STATISTICS__
   static bool is_executing_on_a_core(
@@ -39,7 +42,7 @@
       }
     #else
       int  cpu;
-      for ( cpu=0 ; cpu < rtems_smp_get_number_of_processors() ; cpu++ ) {
+      for ( cpu=0 ; cpu < rtems_smp_get_processor_count() ; cpu++ ) {
         Per_CPU_Control *p = &_Per_CPU_Information[cpu];
         if ( p->executing->Object.id == the_thread->Object.id ) {
           *time_of_context_switch = p->time_of_last_context_switch;

@@ -61,6 +61,10 @@
   #include <bsp.h>
 #endif
 
+#ifdef RTEMS_NEWLIB
+  #include <sys/reent.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -683,7 +687,7 @@ const rtems_libio_helper rtems_fs_init_helper =
    * NOTE: This is the same as the Simple Scheduler
    */
   #define CONFIGURE_MEMORY_FOR_SCHEDULER ( \
-    _Configure_From_workspace( sizeof(Chain_Control) ) \
+    _Configure_From_workspace( sizeof( Scheduler_simple_smp_Control ) ) \
   )
   #define CONFIGURE_MEMORY_PER_TASK_FOR_SCHEDULER (0)
 #endif
@@ -1017,7 +1021,11 @@ const rtems_libio_helper rtems_fs_init_helper =
 #endif
 
 #ifndef CONFIGURE_INIT_TASK_INITIAL_MODES
-  #define CONFIGURE_INIT_TASK_INITIAL_MODES RTEMS_NO_PREEMPT
+  #if defined(RTEMS_SMP) && defined(CONFIGURE_SMP_APPLICATION)
+    #define CONFIGURE_INIT_TASK_INITIAL_MODES RTEMS_DEFAULT_MODES
+  #else
+    #define CONFIGURE_INIT_TASK_INITIAL_MODES RTEMS_NO_PREEMPT
+  #endif
 #endif
 
 #ifndef CONFIGURE_INIT_TASK_ARGUMENTS
@@ -1650,6 +1658,16 @@ const rtems_libio_helper rtems_fs_init_helper =
   #define CONFIGURE_NUMBER_OF_INITIAL_EXTENSIONS 0
 #endif
 
+#if defined(RTEMS_NEWLIB) && defined(__DYNAMIC_REENT__)
+  struct _reent *__getreent(void)
+  {
+    #ifdef CONFIGURE_DISABLE_NEWLIB_REENTRANCY
+      return _GLOBAL_REENT;
+    #else
+      return _Thread_Get_executing()->libc_reent;
+    #endif
+  }
+#endif
 
 #endif
 
@@ -1939,8 +1957,6 @@ const rtems_libio_helper rtems_fs_init_helper =
  */
 
 #if (defined(RTEMS_NEWLIB) && !defined(CONFIGURE_DISABLE_NEWLIB_REENTRANCY))
-  #include <reent.h>
-
   #define CONFIGURE_MEMORY_PER_TASK_FOR_NEWLIB \
     _Configure_From_workspace(sizeof(struct _reent))
 #else
@@ -2352,6 +2368,13 @@ const rtems_libio_helper rtems_fs_init_helper =
     #else
       false,
     #endif
+    #ifdef RTEMS_SMP
+      #ifdef CONFIGURE_SMP_APPLICATION
+        true,
+      #else
+        false,
+      #endif
+    #endif
     CONFIGURE_MAXIMUM_DRIVERS,                /* maximum device drivers */
     CONFIGURE_NUMBER_OF_DRIVERS,              /* static device drivers */
     Device_drivers,                           /* pointer to driver table */
@@ -2360,22 +2383,15 @@ const rtems_libio_helper rtems_fs_init_helper =
     #if defined(RTEMS_MULTIPROCESSING)
       CONFIGURE_MULTIPROCESSING_TABLE,        /* pointer to MP config table */
     #endif
+    #ifdef RTEMS_SMP
+      CONFIGURE_SMP_MAXIMUM_PROCESSORS
+    #endif
   };
 #endif
 
 #endif /* CONFIGURE_HAS_OWN_CONFIGURATION_TABLE */
 
 #if defined(RTEMS_SMP)
-  /**
-   * Instantiate the variable which specifies the number of CPUs
-   * in an SMP configuration.
-   */
-  #if defined(CONFIGURE_INIT)
-    uint32_t rtems_configuration_smp_maximum_processors = \
-        CONFIGURE_SMP_MAXIMUM_PROCESSORS;
-  #else
-    extern uint32_t rtems_configuration_smp_maximum_processors;
-  #endif
  /*
   * Instantiate the Per CPU information based upon the user configuration.
   */

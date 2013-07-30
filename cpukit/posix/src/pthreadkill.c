@@ -24,10 +24,10 @@
 #include <signal.h>
 #include <errno.h>
 
-#include <rtems/system.h>
-#include <rtems/posix/pthread.h>
+#include <rtems/posix/pthreadimpl.h>
 #include <rtems/posix/psignalimpl.h>
 #include <rtems/score/isr.h>
+#include <rtems/score/threadimpl.h>
 #include <rtems/seterr.h>
 
 int pthread_kill(
@@ -60,7 +60,7 @@ int pthread_kill(
       if ( sig ) {
 
         if ( _POSIX_signals_Vectors[ sig ].sa_handler == SIG_IGN ) {
-          _Thread_Enable_dispatch();
+          _Objects_Put( &the_thread->Object );
           return 0;
         }
 
@@ -71,9 +71,9 @@ int pthread_kill(
         (void) _POSIX_signals_Unblock_thread( the_thread, sig, NULL );
 
         if ( _ISR_Is_in_progress() && _Thread_Is_executing( the_thread ) )
-	  _Thread_Dispatch_necessary = true;
+          _Thread_Dispatch_necessary = true;
       }
-      _Thread_Enable_dispatch();
+      _Objects_Put( &the_thread->Object );
       return 0;
 
 #if defined(RTEMS_MULTIPROCESSING)

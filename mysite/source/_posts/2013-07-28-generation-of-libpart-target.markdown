@@ -11,6 +11,8 @@ included in the automatic generation process. First I will discuss where the
 configuration for the generation is done; Second I talk about the reasons, why
 I won't intercept this process and which solution I settled with.
 
+<!--more-->
+
 ## How Makefiles are generated
 
 Like the name 'generated-code' would suggest, every file below this directory

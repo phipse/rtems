@@ -4,7 +4,7 @@
   <title><![CDATA[GSoC 2013 - RTEMS Virtualization Layer Project]]></title>
   <link href="http://phipse.github.io/rtems/atom.xml" rel="self"/>
   <link href="http://phipse.github.io/rtems/"/>
-  <updated>2013-07-31T21:50:47+02:00</updated>
+  <updated>2013-07-31T21:51:30+02:00</updated>
   <id>http://phipse.github.io/rtems/</id>
   <author>
     <name><![CDATA[Philipp Eppelt]]></name>
@@ -82,7 +82,7 @@ POK first.</p>
 
 <h2>Putting it all together</h2>
 
-<p>To rebuild the current work, you can either checkout my virt-bsp branch from:
+<p>To rebuild the current work, you can either checkout my virt-bsp branch from
 <a href="https://github.com/phipse/rtems">github</a></p>
 
 <p>Or you can apply the patches from the rtems-devel mailing list to the current

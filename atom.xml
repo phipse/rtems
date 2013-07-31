@@ -4,7 +4,7 @@
   <title><![CDATA[GSoC 2013 - RTEMS Virtualization Layer Project]]></title>
   <link href="http://phipse.github.io/rtems/atom.xml" rel="self"/>
   <link href="http://phipse.github.io/rtems/"/>
-  <updated>2013-07-31T21:44:41+02:00</updated>
+  <updated>2013-07-31T21:49:57+02:00</updated>
   <id>http://phipse.github.io/rtems/</id>
   <author>
     <name><![CDATA[Philipp Eppelt]]></name>
@@ -41,14 +41,16 @@ virtualized environment, as they affect other virtual machines. Functions in
 cpukit/score/cpu/i386/ are using these instruction and therefore need to be
 moved. However, these functions must remain in the native version of an RTEMS
 i386 binary, but must be replaced with different implementations in a virtual
-compilation.
-RTEMS is providing with libcpu a place where CPUs with special features of the
+compilation.</p>
+
+<p>RTEMS is providing with libcpu a place where CPUs with special features of the
 same architecture can be specified. That is the place where the native and
 virtual implementations of the mentioned functions need to go.
 I introduced two new CPU models for the i386 architecture &ndash; native and virtual.
 Native is used by the pc386-BSPs and should work like before. Virtual is the
-new kid in the block and is only used by the virtPok BSP.
-Configure.ac is controlling the choice of the bsp. As the config file for a BSP
+new kid in the block and is only used by the virtPok BSP.</p>
+
+<p>Configure.ac is controlling the choice of the bsp. As the config file for a BSP
 specifies the CPU model, the virtPok.cfg is specifying <strong><em>virt-pok</em></strong> as CPU.
 Configure.ac checks for this CPU model and sets a conditional if this model is
 used. The conditional controls the path of execution in the corresponding
@@ -59,11 +61,13 @@ Makefile.am, which in turn chooses the virtual or native directory.</p>
 <p>The virtualization layer consists of two parts: One for the CPU and one for the
 BSP. My intention for the layer is to provide on BSP using the functionality of
 the layer and then the layer must be implemented by the host/hypervisor and
-provided as a library to RTEMS.
-The CPU part needs to be implemented in RTEMS once for each architecture. The
+provided as a library to RTEMS.</p>
+
+<p>The CPU part needs to be implemented in RTEMS once for each architecture. The
 BSP currently developed for i386 might be reusable on other architectures, as
-the host cares for architecture dependent parts.
-Both header files virtLayerBSP.h and virtLayerCPU.h can be found in
+the host cares for architecture dependent parts.</p>
+
+<p>Both header files virtLayerBSP.h and virtLayerCPU.h can be found in
 c/src/lib/libbsp/i386/virtPok/include/ .</p>
 
 <h2>Virtual BSP</h2>
@@ -79,14 +83,16 @@ POK first.</p>
 <h2>Putting it all together</h2>
 
 <p>To rebuild the current work, you can either checkout my virt-bsp branch from:
-github: <a href="https://github.com/phipse/rtems">https://github.com/phipse/rtems</a>
-Or you can apply the patches from the rtems-devel mailing list to the current
+<a href="https://github.com/phipse/rtems">github</a></p>
+
+<p>Or you can apply the patches from the rtems-devel mailing list to the current
 RTEMS git head.</p>
 
 <p>Then you need to follow my explanations from the <a href="http://phipse.github.io/rtems/blog/2013/07/08/HelloWorld/" title="Hello World">Hello
 World</a>
-blog post.
-Unfortunately, you need to build RTEMS with <strong>make -j1</strong> as parallel
+blog post.</p>
+
+<p>Unfortunately, you need to build RTEMS with <strong>make -j1</strong> as parallel
 compilation can lead to undefined reference errors.</p>
 ]]></content>
   </entry>

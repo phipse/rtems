@@ -2,42 +2,46 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://phipse.github.io/rtems/blog/2013/07/05/POK-World/</loc>
-        <lastmod>2013-07-29T10:50:09+02:00</lastmod>
+        <lastmod>2013-07-31T20:53:56+02:00</lastmod>
     </url>
     <url>
         <loc>http://phipse.github.io/rtems/blog/2013/07/05/RTEMS-World/</loc>
-        <lastmod>2013-07-29T10:50:09+02:00</lastmod>
+        <lastmod>2013-07-31T20:53:56+02:00</lastmod>
     </url>
     <url>
         <loc>http://phipse.github.io/rtems/blog/2013/07/07/GDB-hell/</loc>
-        <lastmod>2013-07-29T10:50:09+02:00</lastmod>
+        <lastmod>2013-07-31T20:53:56+02:00</lastmod>
     </url>
     <url>
         <loc>http://phipse.github.io/rtems/blog/2013/07/07/Modeling-the-partition/</loc>
-        <lastmod>2013-07-29T10:50:09+02:00</lastmod>
+        <lastmod>2013-07-31T20:53:56+02:00</lastmod>
     </url>
     <url>
         <loc>http://phipse.github.io/rtems/blog/2013/07/08/HelloWorld/</loc>
-        <lastmod>2013-07-29T10:50:09+02:00</lastmod>
+        <lastmod>2013-07-31T20:53:56+02:00</lastmod>
     </url>
     <url>
         <loc>http://phipse.github.io/rtems/blog/2013/07/09/how-late-is-it/</loc>
-        <lastmod>2013-07-29T10:50:09+02:00</lastmod>
+        <lastmod>2013-07-31T20:53:56+02:00</lastmod>
     </url>
     <url>
         <loc>http://phipse.github.io/rtems/blog/2013/07/28/generation-of-libpart-target/</loc>
-        <lastmod>2013-07-29T10:50:40+02:00</lastmod>
+        <lastmod>2013-07-31T20:53:56+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://phipse.github.io/rtems/blog/2013/07/30/midterm-explanation/</loc>
+        <lastmod>2013-07-31T21:44:27+02:00</lastmod>
     </url>
     <url>
         <loc>http://phipse.github.io/rtems/blog/archives/</loc>
-        <lastmod>2013-07-29T10:50:40+02:00</lastmod>
+        <lastmod>2013-07-31T21:44:27+02:00</lastmod>
     </url>
     <url>
         <loc>http://phipse.github.io/rtems/</loc>
-        <lastmod>2013-07-29T10:50:40+02:00</lastmod>
+        <lastmod>2013-07-31T21:44:27+02:00</lastmod>
     </url>
     <url>
         <loc>http://phipse.github.io/rtems/robots.txt</loc>
-        <lastmod>2013-07-29T10:50:09+02:00</lastmod>
+        <lastmod>2013-07-31T20:53:56+02:00</lastmod>
     </url>
 </urlset>

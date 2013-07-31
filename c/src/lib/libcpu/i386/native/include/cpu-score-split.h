@@ -14,7 +14,6 @@
 extern "C" {
 #endif
 
-// TODO fix includes
 #include <rtems/score/i386.h>
 
 
@@ -28,7 +27,6 @@ extern "C" {
  */
 
 
-// TODO replace with virtLayer calls
 #define _CPU_ISR_Set_level( _new_level ) \
   { \
     if ( _new_level ) __asm__ volatile ( "cli" ); \
@@ -44,7 +42,6 @@ extern "C" {
  *    + disable interrupts and halt the CPU
  */
 
-// TODO replace with virtLayer call
 #define _CPU_Fatal_halt( _error ) \
   { \
     __asm__ volatile ( "cli ; \

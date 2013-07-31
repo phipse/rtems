@@ -13,7 +13,6 @@ extern "C" {
 #endif
 
 
-// TODO add includes
 #include <rtems/score/cpu.h>	// function definition
 
 
@@ -29,7 +28,6 @@ void *_CPU_Thread_Idle_body( uintptr_t ignored )
 {
   while(1)
   {
-  // replace with call to virtualization layer  
     __asm__ volatile ("hlt");
   }
   return NULL;

@@ -4,7 +4,7 @@
   <title><![CDATA[GSoC 2013 - RTEMS Virtualization Layer Project]]></title>
   <link href="http://phipse.github.io/rtems/atom.xml" rel="self"/>
   <link href="http://phipse.github.io/rtems/"/>
-  <updated>2013-07-31T21:49:57+02:00</updated>
+  <updated>2013-07-31T21:50:47+02:00</updated>
   <id>http://phipse.github.io/rtems/</id>
   <author>
     <name><![CDATA[Philipp Eppelt]]></name>
@@ -22,7 +22,7 @@
 the changes I bring into the RTEMS project. This post will explain the patch I
 created for midterm.</p>
 
-<!--break-->
+<!--more-->
 
 
 <h2>Overview</h2>

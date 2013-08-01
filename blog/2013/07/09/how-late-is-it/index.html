@@ -199,17 +199,23 @@ one interrupt can only invoke one handler.</p>
 <h3>Interrupt chaining &amp;&amp; counting pending ones</h3>
 
 <ul>
-<li><p>Handler list
-Instead of one handler, keep a list of handler functions registered to that
-specific interrupt.
-But the handler is converted into an so called offset_low and offset_high.
-Therefore, I don&rsquo;t think this is a good solution.</p></li>
-<li><p>Meta handler
-Define a meta handler object, which registers a requested interrupt and keeps
-track of every registered handler.
-Additionally, it could keep a count of pending interrupts to each partition.</p></li>
+<li>Handler list</li>
 </ul>
 
+
+<p>Instead of one handler, keep a list of handler functions registered to that
+specific interrupt.
+But the handler is converted into an so called offset_low and offset_high.
+Therefore, I don&rsquo;t think this is a good solution.</p>
+
+<ul>
+<li>Meta handler</li>
+</ul>
+
+
+<p>Define a meta handler object, which registers a requested interrupt and keeps
+track of every registered handler.
+Additionally, it could keep a count of pending interrupts to each partition.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>

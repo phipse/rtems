@@ -4,7 +4,7 @@
   <title><![CDATA[GSoC 2013 - RTEMS Virtualization Layer Project]]></title>
   <link href="http://phipse.github.io/rtems/atom.xml" rel="self"/>
   <link href="http://phipse.github.io/rtems/"/>
-  <updated>2013-07-31T21:51:30+02:00</updated>
+  <updated>2013-08-01T11:27:32+02:00</updated>
   <id>http://phipse.github.io/rtems/</id>
   <author>
     <name><![CDATA[Philipp Eppelt]]></name>
@@ -323,7 +323,7 @@ Additionally, it could keep a count of pending interrupts to each partition.</p>
 </span><span class='line'>  <span class="kt">unsigned</span> <span class="kt">int</span>            <span class="n">pending</span><span class="p">[</span><span class="n">POK_CONFIG_NB_PARTITIONS</span><span class="p">];</span>
 </span><span class='line'>  <span class="kt">unsigned</span> <span class="kt">int</span>            <span class="n">vector</span><span class="p">;</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="kt">void</span> <span class="nf">receive_irq</span><span class="p">()</span>
+</span><span class='line'>  <span class="kt">void</span> <span class="nf">receive_irq</span><span class="p">(</span> <span class="kt">void</span> <span class="p">)</span>
 </span><span class='line'>  <span class="p">{</span>
 </span><span class='line'>    <span class="k">for</span><span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">POK_CONFIG_NB_PARTITIONS</span><span class="p">];</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
 </span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">POK_SHED_CURRENT_PARTITION</span> <span class="o">&amp;&amp;</span> <span class="n">reg_handler</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">NULL</span> <span class="p">)</span>
@@ -333,7 +333,7 @@ Additionally, it could keep a count of pending interrupts to each partition.</p>
 </span><span class='line'>      <span class="n">meta_deliver_irq</span><span class="p">();</span>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="kt">void</span> <span class="nf">meta_deliver_irq</span><span class="p">()</span>
+</span><span class='line'>  <span class="kt">void</span> <span class="nf">meta_deliver_irq</span><span class="p">(</span> <span class="kt">void</span> <span class="p">)</span>
 </span><span class='line'>  <span class="p">{</span>
 </span><span class='line'>    <span class="n">reg_handler</span><span class="p">[</span><span class="n">POK_SCHED_CURRENT_PARTITION</span><span class="p">]();</span>
 </span><span class='line'>  <span class="p">}</span>

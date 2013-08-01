@@ -82,14 +82,16 @@ one interrupt can only invoke one handler.
 
 ### Interrupt chaining && counting pending ones
 
-* Handler list
+*   Handler list   
+
 Instead of one handler, keep a list of handler functions registered to that
 specific interrupt.
 But the handler is converted into an so called offset_low and offset_high.
 Therefore, I don't think this is a good solution.
 
 
-* Meta handler 
+*   Meta handler   
+
 Define a meta handler object, which registers a requested interrupt and keeps
 track of every registered handler.
 Additionally, it could keep a count of pending interrupts to each partition. 
@@ -102,7 +104,7 @@ struct meta_handler
   unsigned int			pending[POK_CONFIG_NB_PARTITIONS];
   unsigned int			vector;
 
-  void receive_irq()
+  void receive_irq( void )
   {
     for( i = 0; i < POK_CONFIG_NB_PARTITIONS]; i++)
       if( i != POK_SHED_CURRENT_PARTITION && reg_handler[i] != NULL )
@@ -112,7 +114,7 @@ struct meta_handler
       meta_deliver_irq();
   }
 
-  void meta_deliver_irq()
+  void meta_deliver_irq( void )
   {
     reg_handler[POK_SCHED_CURRENT_PARTITION]();
   }

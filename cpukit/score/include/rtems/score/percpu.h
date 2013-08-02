@@ -19,13 +19,37 @@
 
 #include <rtems/score/cpu.h>
 
-#ifdef ASM
+#if defined( ASM )
   #include <rtems/asm.h>
 #else
+  #include <rtems/score/assert.h>
   #include <rtems/score/isrlevel.h>
   #include <rtems/score/timestamp.h>
   #include <rtems/score/smplock.h>
   #include <rtems/score/smp.h>
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if defined( RTEMS_SMP )
+  /*
+   * This ensures that on SMP configurations the individual per-CPU controls
+   * are on different cache lines to prevent false sharing.  This define can be
+   * used in assembler code to easily get the per-CPU control for a particular
+   * processor.
+   */
+  #define PER_CPU_CONTROL_SIZE_LOG2 7
+
+  #define PER_CPU_CONTROL_SIZE ( 1 << PER_CPU_CONTROL_SIZE_LOG2 )
+#endif
+
+#if !defined( ASM )
+
+#ifndef __THREAD_CONTROL_DEFINED__
+#define __THREAD_CONTROL_DEFINED__
+typedef struct Thread_Control_struct Thread_Control;
 #endif
 
 /**
@@ -41,19 +65,7 @@
 
 /**@{*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifndef ASM
-#include <rtems/score/timestamp.h>
-
-#ifndef __THREAD_CONTROL_DEFINED__
-#define __THREAD_CONTROL_DEFINED__
-typedef struct Thread_Control_struct Thread_Control;
-#endif
-
-#ifdef RTEMS_SMP
+#if defined( RTEMS_SMP )
 
 #if CPU_USE_DEFERRED_FP_SWITCH == TRUE
   #error "deferred FP switch not implemented for SMP"
@@ -121,7 +133,7 @@ typedef enum {
   PER_CPU_STATE_SHUTDOWN
 } Per_CPU_State;
 
-#endif /* RTEMS_SMP */
+#endif /* defined( RTEMS_SMP ) */
 
 /**
  *  @brief Per CPU Core Structure
@@ -162,7 +174,7 @@ typedef struct {
   /** This is the time of the last context switch on this CPU. */
   Timestamp_Control time_of_last_context_switch;
 
-  #if defined(RTEMS_SMP)
+  #if defined( RTEMS_SMP )
     /** This element is used to lock this structure */
     SMP_lock_Control lock;
 
@@ -183,9 +195,113 @@ typedef struct {
     Per_CPU_State state;
   #endif
 } Per_CPU_Control;
+
+#if defined( RTEMS_SMP )
+typedef struct {
+  Per_CPU_Control per_cpu;
+  char unused_space_for_cache_line_alignment
+    [ PER_CPU_CONTROL_SIZE - sizeof( Per_CPU_Control ) ];
+} Per_CPU_Control_envelope;
+#else
+typedef struct {
+  Per_CPU_Control per_cpu;
+} Per_CPU_Control_envelope;
 #endif
 
-#if defined(ASM) || defined(_RTEMS_PERCPU_DEFINE_OFFSETS)
+/**
+ *  @brief Set of Per CPU Core Information
+ *
+ *  This is an array of per CPU core information.
+ */
+extern Per_CPU_Control_envelope _Per_CPU_Information[] CPU_STRUCTURE_ALIGNMENT;
+
+#if defined( RTEMS_SMP )
+static inline Per_CPU_Control *_Per_CPU_Get( void )
+{
+  _Assert_Thread_dispatching_repressed();
+
+  return &_Per_CPU_Information[ _SMP_Get_current_processor() ].per_cpu;
+}
+#else
+#define _Per_CPU_Get() ( &_Per_CPU_Information[ 0 ].per_cpu )
+#endif
+
+static inline Per_CPU_Control *_Per_CPU_Get_by_index( uint32_t index )
+{
+  return &_Per_CPU_Information[ index ].per_cpu;
+}
+
+static inline uint32_t _Per_CPU_Get_index( const Per_CPU_Control *per_cpu )
+{
+  const Per_CPU_Control_envelope *per_cpu_envelope =
+    ( const Per_CPU_Control_envelope * ) per_cpu;
+
+  return ( uint32_t ) ( per_cpu_envelope - &_Per_CPU_Information[ 0 ] );
+}
+
+#if defined( RTEMS_SMP )
+
+static inline void _Per_CPU_Send_interrupt( const Per_CPU_Control *per_cpu )
+{
+  _CPU_SMP_Send_interrupt( _Per_CPU_Get_index( per_cpu ) );
+}
+
+/**
+ *  @brief Initialize SMP Handler
+ *
+ *  This method initialize the SMP Handler.
+ */
+void _SMP_Handler_initialize(void);
+
+/**
+ *  @brief Allocate and Initialize Per CPU Structures
+ *
+ *  This method allocates and initialize the per CPU structure.
+ */
+void _Per_CPU_Initialize(void);
+
+void _Per_CPU_Change_state(
+  Per_CPU_Control *per_cpu,
+  Per_CPU_State new_state
+);
+
+void _Per_CPU_Wait_for_state(
+  const Per_CPU_Control *per_cpu,
+  Per_CPU_State desired_state
+);
+
+#define _Per_CPU_Lock_acquire( per_cpu, isr_cookie ) \
+  _SMP_lock_ISR_disable_and_acquire( &( per_cpu )->lock, isr_cookie )
+
+#define _Per_CPU_Lock_release( per_cpu, isr_cookie ) \
+  _SMP_lock_Release_and_ISR_enable( &( per_cpu )->lock, isr_cookie )
+
+#endif /* defined( RTEMS_SMP ) */
+
+/*
+ * On a non SMP system, the _SMP_Get_current_processor() is defined to 0.
+ * Thus when built for non-SMP, there should be no performance penalty.
+ */
+#define _Thread_Heir \
+  _Per_CPU_Get()->heir
+#define _Thread_Executing \
+  _Per_CPU_Get()->executing
+#define _ISR_Nest_level \
+  _Per_CPU_Get()->isr_nest_level
+#define _CPU_Interrupt_stack_low \
+  _Per_CPU_Get()->interrupt_stack_low
+#define _CPU_Interrupt_stack_high \
+  _Per_CPU_Get()->interrupt_stack_high
+#define _Thread_Dispatch_necessary \
+  _Per_CPU_Get()->dispatch_necessary
+#define _Thread_Time_of_last_context_switch \
+  _Per_CPU_Get()->time_of_last_context_switch
+
+/**@}*/
+
+#endif /* !defined( ASM ) */
+
+#if defined( ASM ) || defined( _RTEMS_PERCPU_DEFINE_OFFSETS )
 
 #if (CPU_ALLOCATE_INTERRUPT_STACK == TRUE) || \
     (CPU_HAS_SOFTWARE_INTERRUPT_STACK == TRUE)
@@ -222,85 +338,11 @@ typedef struct {
 #define DISPATCH_NEEDED \
   (SYM(_Per_CPU_Information) + PER_CPU_DISPATCH_NEEDED)
 
-#endif /* defined(ASM) || defined(_RTEMS_PERCPU_DEFINE_OFFSETS) */
-
-#ifndef ASM
-
-/**
- *  @brief Set of Per CPU Core Information
- *
- *  This is an array of per CPU core information.
- */
-extern Per_CPU_Control _Per_CPU_Information[] CPU_STRUCTURE_ALIGNMENT;
-
-#if defined(RTEMS_SMP)
-/**
- *  @brief Set of Pointers to Per CPU Core Information
- *
- *  This is an array of pointers to each CPU's per CPU data structure.
- *  It should be simpler to retrieve this pointer in assembly language
- *  that to calculate the array offset.
- */
-extern Per_CPU_Control *_Per_CPU_Information_p[];
-
-/**
- *  @brief Initialize SMP Handler
- *
- *  This method initialize the SMP Handler.
- */
-void _SMP_Handler_initialize(void);
-
-/**
- *  @brief Allocate and Initialize Per CPU Structures
- *
- *  This method allocates and initialize the per CPU structure.
- */
-void _Per_CPU_Initialize(void);
-
-void _Per_CPU_Change_state(
-  Per_CPU_Control *per_cpu,
-  Per_CPU_State new_state
-);
-
-void _Per_CPU_Wait_for_state(
-  const Per_CPU_Control *per_cpu,
-  Per_CPU_State desired_state
-);
-
-#define _Per_CPU_Lock_acquire( per_cpu, isr_cookie ) \
-  _SMP_lock_ISR_disable_and_acquire( &( per_cpu )->lock, isr_cookie )
-
-#define _Per_CPU_Lock_release( per_cpu, isr_cookie ) \
-  _SMP_lock_Release_and_ISR_enable( &( per_cpu )->lock, isr_cookie )
-
-#endif
-
-/*
- * On a non SMP system, the _SMP_Get_current_processor() is defined to 0.
- * Thus when built for non-SMP, there should be no performance penalty.
- */
-#define _Thread_Heir \
-  _Per_CPU_Information[_SMP_Get_current_processor()].heir
-#define _Thread_Executing \
-  _Per_CPU_Information[_SMP_Get_current_processor()].executing
-#define _ISR_Nest_level \
-  _Per_CPU_Information[_SMP_Get_current_processor()].isr_nest_level
-#define _CPU_Interrupt_stack_low \
-  _Per_CPU_Information[_SMP_Get_current_processor()].interrupt_stack_low
-#define _CPU_Interrupt_stack_high \
-  _Per_CPU_Information[_SMP_Get_current_processor()].interrupt_stack_high
-#define _Thread_Dispatch_necessary \
-  _Per_CPU_Information[_SMP_Get_current_processor()].dispatch_necessary
-#define _Thread_Time_of_last_context_switch \
-  _Per_CPU_Information[_SMP_Get_current_processor()].time_of_last_context_switch
-
-#endif  /* ASM */
+#endif /* defined( ASM ) || defined( _RTEMS_PERCPU_DEFINE_OFFSETS ) */
 
 #ifdef __cplusplus
 }
 #endif
-
-/**@}*/
 
 #endif
 /* end of include file */

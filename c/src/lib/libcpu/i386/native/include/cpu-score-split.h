@@ -44,10 +44,11 @@ extern "C" {
 
 #define _CPU_Fatal_halt( _error ) \
   { \
+    uint32_t _error_lvalue = ( _error ); \
     __asm__ volatile ( "cli ; \
                     movl %0,%%eax ; \
                     hlt" \
-                    : "=r" ((_error)) : "0" ((_error)) \
+                    : "=r" ((_error_lvalue)) : "0" ((_error_lvalue)) \
     ); \
   }
 

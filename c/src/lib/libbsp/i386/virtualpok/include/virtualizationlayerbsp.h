@@ -1,5 +1,7 @@
-/* Date:      06/10/2013
- * Author:    Philipp Eppelt
+/* Author:    Philipp Eppelt - philipp.eppelt@mailbox.tu-dresden.de
+ *
+ * COPYRIGHT (c) 2013 Philipp Eppelt.
+ *
  * Purpose:   BSP part of the virtualization layer.
  * Licencse:  see RTEMS License.
  */
@@ -12,31 +14,31 @@
  *
  */
 __attribute__((fastcall)) int
-virt_consoleInit(void);
+_BSP_Virtual_Console_init(void);
 
 /**
  * \brief Reads a character from the console.
  */
 __attribute__((fastcall)) char
-virt_charRead(void);
+_BSP_Virtual_Char_read(void);
 
 /**
  * \brief Writes a character to the console.
  */
 __attribute__((fastcall)) void
-virt_charWrite(char* c);
+_BSP_Virtual_Char_write(char* c);
 
 /**
  * \brief Initializes the clock.
  */
 __attribute__((fastcall)) int
-virt_clockInit(void);
+_BSP_Virtual_Clock_init(void);
 
 /**
  * \brief Reads the clock.
  */
 __attribute__((fastcall)) int
-virt_clockRead(void);
+_BSP_Virtual_Clock_read(void);
 
 /**
  * \brief Handles faults delivered by the host system.
@@ -44,12 +46,13 @@ virt_clockRead(void);
  * POK will forward occuring faults to this handler.
  */
 __attribute__((fastcall)) int
-virt_faultHandler(void);
+_BSP_Virtual_faulthandler(void);
 
 
-/* Startup functions */
+/* Startup functions 
+ */
 
 __attribute__((fastcall)) int 
-virt_getWorkSpaceArea( void );
+_BSP_Virtual_getworkspacearea( void );
 
 #endif /* RTEMS_VIRT_LAYER_BSP_H */

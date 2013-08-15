@@ -45,13 +45,13 @@ $(PROJECT_INCLUDE)/tm27.h: ../../shared/include/tm27.h $(PROJECT_INCLUDE)/$(dirs
 	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/tm27.h
 PREINSTALL_FILES += $(PROJECT_INCLUDE)/tm27.h
 
-$(PROJECT_INCLUDE)/virtLayerBSP.h: include/virtLayerBSP.h $(PROJECT_INCLUDE)/$(dirstamp)
-	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/virtLayerBSP.h
-PREINSTALL_FILES += $(PROJECT_INCLUDE)/virtLayerBSP.h
+$(PROJECT_INCLUDE)/virtualizationlayerbsp.h: include/virtualizationlayerbsp.h $(PROJECT_INCLUDE)/$(dirstamp)
+	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/virtualizationlayerbsp.h
+PREINSTALL_FILES += $(PROJECT_INCLUDE)/virtualizationlayerbsp.h
 
-$(PROJECT_INCLUDE)/virtLayerCPU.h: include/virtLayerCPU.h $(PROJECT_INCLUDE)/$(dirstamp)
-	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/virtLayerCPU.h
-PREINSTALL_FILES += $(PROJECT_INCLUDE)/virtLayerCPU.h
+$(PROJECT_INCLUDE)/virtualizationlayercpu.h: include/virtualizationlayercpu.h $(PROJECT_INCLUDE)/$(dirstamp)
+	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/virtualizationlayercpu.h
+PREINSTALL_FILES += $(PROJECT_INCLUDE)/virtualizationlayercpu.h
 
 $(PROJECT_INCLUDE)/bspopts.h: include/bspopts.h $(PROJECT_INCLUDE)/$(dirstamp)
 	$(INSTALL_DATA) $< $(PROJECT_INCLUDE)/bspopts.h

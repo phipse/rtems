@@ -2,7 +2,7 @@
  *
  *  This include file contains all board IO definitions.
  *
- *  XXX : put yours in here
+ *  COPYRIGHT (c) 2013 Philipp Eppelt.
  *
  *  COPYRIGHT (c) 1989-1999.
  *  On-Line Applications Research Corporation (OAR).
@@ -11,21 +11,20 @@
  *  found in the file LICENSE in this distribution or at
  *  http://www.rtems.com/license/LICENSE.
  *
- *  $Id$
  */
 
 #ifndef _BSP_H
 #define _BSP_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include <bspopts.h>
 
 #include <rtems.h>
 #include <rtems/console.h>
 #include <rtems/clockdrv.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
  *  Simple spin delay in microsecond units for device drivers.

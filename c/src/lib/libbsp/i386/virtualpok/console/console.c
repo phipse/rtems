@@ -1,6 +1,8 @@
 /*
  *  This file contains the template for a console IO package.
  *
+ *  COPYRIGHT (c) 2013 Philipp Eppelt.
+ *
  *  COPYRIGHT (c) 1989-1999.
  *  On-Line Applications Research Corporation (OAR).
  *
@@ -8,15 +10,13 @@
  *  found in the file LICENSE in this distribution or at
  *  http://www.rtems.com/license/LICENSE.
  *
- *  $Id$
  */
 
 #define NO_BSP_INIT
 
 #include <bsp.h>
 #include <rtems/libio.h>
-//#include <bsp/poksyscalls.h>
-#include <virtLayerBSP.h>
+#include <virtualizationlayerbsp.h>
 
 /*  console_initialize
  *
@@ -49,7 +49,7 @@ rtems_device_driver console_initialize(
   }
 
 // Virt: Added the virtual console init.
-  status = virt_consoleInit();
+  status = _BSP_Virtual_Console_init();
 
   if( status != 0 )
   {
@@ -96,7 +96,7 @@ char inbyte( void )
    *  If polling, wait until a character is available.
    */
 
-  return virt_charRead();
+  return _BSP_Virtual_Char_read();
 }
 
 /*  outbyte
@@ -114,7 +114,7 @@ void outbyte(
   char ch
 )
 {
-  virt_charWrite(&ch);
+  _BSP_Virtual_Char_write(&ch);
 }
 
 /* printk support */

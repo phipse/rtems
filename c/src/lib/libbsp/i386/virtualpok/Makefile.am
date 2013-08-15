@@ -1,6 +1,4 @@
 ##
-## $Id$
-##
 
 ACLOCAL_AMFLAGS = -I ../../../../aclocal
 
@@ -13,8 +11,8 @@ dist_project_lib_DATA = bsp_specs
 
 include_HEADERS = include/bsp.h
 include_HEADERS += ../../shared/include/tm27.h
-include_HEADERS += include/virtLayerBSP.h
-include_HEADERS += include/virtLayerCPU.h
+include_HEADERS += include/virtualizationlayerbsp.h
+include_HEADERS += include/virtualizationlayercpu.h
 
 nodist_include_HEADERS = include/bspopts.h
 nodist_include_bsp_HEADERS = ../../shared/include/bootcard.h

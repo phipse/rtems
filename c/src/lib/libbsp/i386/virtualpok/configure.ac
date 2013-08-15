@@ -1,9 +1,8 @@
 ## Process this file with autoconf to produce a configure script.
 ##
-## $Id$
 
 AC_PREREQ([2.68])
-AC_INIT([rtems-c-src-lib-libbsp-i386-virtPok],[_RTEMS_VERSION],[http://www.rtems.org/bugzilla])
+AC_INIT([rtems-c-src-lib-libbsp-i386-virtualpok],[_RTEMS_VERSION],[http://www.rtems.org/bugzilla])
 AC_CONFIG_SRCDIR([bsp_specs])
 RTEMS_TOP(../../../../../..)
 

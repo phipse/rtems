@@ -33,6 +33,11 @@ RTEMS_STATIC_ASSERT(
   );
 #endif
 
+RTEMS_STATIC_ASSERT(
+  sizeof( CPU_Per_CPU_control ) == CPU_PER_CPU_CONTROL_SIZE,
+  CPU_PER_CPU_CONTROL_SIZE
+);
+
 #if defined( RTEMS_SMP )
   RTEMS_STATIC_ASSERT(
     sizeof( Per_CPU_Control_envelope ) == PER_CPU_CONTROL_SIZE,
@@ -43,6 +48,12 @@ RTEMS_STATIC_ASSERT(
 RTEMS_STATIC_ASSERT(
   offsetof(Per_CPU_Control, isr_nest_level) == PER_CPU_ISR_NEST_LEVEL,
   PER_CPU_ISR_NEST_LEVEL
+);
+
+RTEMS_STATIC_ASSERT(
+  offsetof(Per_CPU_Control, thread_dispatch_disable_level)
+    == PER_CPU_THREAD_DISPATCH_DISABLE_LEVEL,
+  PER_CPU_THREAD_DISPATCH_DISABLE_LEVEL
 );
 
 RTEMS_STATIC_ASSERT(

@@ -106,8 +106,6 @@ endif
 
 ## src
 
-AM_CPPFLAGS += -D__RTEMS_INSIDE__
-
 noinst_LIBRARIES = libscore.a
 libscore_a_SOURCES =
 libscore_a_CPPFLAGS = $(AM_CPPFLAGS)
@@ -118,7 +116,6 @@ libscore_a_SOURCES += src/mpci.c src/objectmp.c src/threadmp.c
 endif
 
 if HAS_SMP
-libscore_a_SOURCES += src/isrsmp.c
 libscore_a_SOURCES += src/schedulersimplesmp.c
 libscore_a_SOURCES += src/smp.c
 endif
@@ -181,8 +178,11 @@ libscore_a_SOURCES += src/objectallocate.c src/objectclose.c \
 
 ## SCHEDULER_C_FILES
 libscore_a_SOURCES += src/scheduler.c
-libscore_a_SOURCES += src/schedulerdefaulttick.c
+libscore_a_SOURCES += src/schedulerdefaultallocatefree.c
+libscore_a_SOURCES += src/schedulerdefaultreleasejob.c
 libscore_a_SOURCES += src/schedulerdefaultstartidle.c
+libscore_a_SOURCES += src/schedulerdefaulttick.c
+libscore_a_SOURCES += src/schedulerdefaultupdate.c
 
 ## SCHEDULERPRIORITY_C_FILES
 libscore_a_SOURCES += src/schedulerpriority.c \
@@ -193,7 +193,6 @@ libscore_a_SOURCES += src/schedulerpriority.c \
     src/schedulerpriorityextract.c \
     src/schedulerpriorityfree.c \
     src/schedulerpriorityprioritycompare.c \
-    src/schedulerpriorityreleasejob.c \
     src/schedulerpriorityschedule.c \
     src/schedulerpriorityunblock.c \
     src/schedulerpriorityupdate.c \

@@ -23,9 +23,8 @@
   #include <rtems/asm.h>
 #else
   #include <rtems/score/assert.h>
-  #include <rtems/score/isrlevel.h>
+  #include <rtems/score/isrlock.h>
   #include <rtems/score/timestamp.h>
-  #include <rtems/score/smplock.h>
   #include <rtems/score/smp.h>
 #endif
 
@@ -141,6 +140,11 @@ typedef enum {
  *  This structure is used to hold per core state information.
  */
 typedef struct {
+  /**
+   * @brief CPU port specific control.
+   */
+  CPU_Per_CPU_control cpu_per_cpu;
+
   #if (CPU_ALLOCATE_INTERRUPT_STACK == TRUE) || \
       (CPU_HAS_SOFTWARE_INTERRUPT_STACK == TRUE)
     /**
@@ -162,6 +166,12 @@ typedef struct {
    */
   uint32_t isr_nest_level;
 
+  /**
+   * @brief The thread dispatch critical section nesting counter which is used
+   * to prevent context switches at inopportune moments.
+   */
+  volatile uint32_t thread_dispatch_disable_level;
+
   /** This is set to true when this CPU needs to run the dispatcher. */
   volatile bool dispatch_necessary;
 
@@ -174,10 +184,13 @@ typedef struct {
   /** This is the time of the last context switch on this CPU. */
   Timestamp_Control time_of_last_context_switch;
 
-  #if defined( RTEMS_SMP )
-    /** This element is used to lock this structure */
-    SMP_lock_Control lock;
+  /**
+   * @brief This lock protects the dispatch_necessary, executing, heir and
+   * message fields.
+   */
+  ISR_lock_Control lock;
 
+  #if defined( RTEMS_SMP )
     /**
      *  This is the request for the interrupt.
      *
@@ -215,12 +228,59 @@ typedef struct {
  */
 extern Per_CPU_Control_envelope _Per_CPU_Information[] CPU_STRUCTURE_ALIGNMENT;
 
+#define _Per_CPU_ISR_disable_and_acquire( per_cpu, isr_cookie ) \
+  _ISR_lock_ISR_disable_and_acquire( &( per_cpu )->lock, isr_cookie )
+
+#define _Per_CPU_Release_and_ISR_enable( per_cpu, isr_cookie ) \
+  _ISR_lock_Release_and_ISR_enable( &( per_cpu )->lock, isr_cookie )
+
+#define _Per_CPU_Acquire( per_cpu ) \
+  _ISR_lock_Acquire( &( per_cpu )->lock )
+
+#define _Per_CPU_Release( per_cpu ) \
+  _ISR_lock_Release( &( per_cpu )->lock )
+
+#if defined( RTEMS_SMP )
+#define _Per_CPU_Acquire_all( isr_cookie ) \
+  do { \
+    uint32_t ncpus = _SMP_Get_processor_count(); \
+    uint32_t cpu; \
+    _ISR_Disable( isr_cookie ); \
+    for ( cpu = 0 ; cpu < ncpus ; ++cpu ) { \
+      _Per_CPU_Acquire( _Per_CPU_Get_by_index( cpu ) ); \
+    } \
+  } while ( 0 )
+#else
+#define _Per_CPU_Acquire_all( isr_cookie ) \
+  _ISR_Disable( isr_cookie )
+#endif
+
+#if defined( RTEMS_SMP )
+#define _Per_CPU_Release_all( isr_cookie ) \
+  do { \
+    uint32_t ncpus = _SMP_Get_processor_count(); \
+    uint32_t cpu; \
+    for ( cpu = 0 ; cpu < ncpus ; ++cpu ) { \
+      _Per_CPU_Release( _Per_CPU_Get_by_index( cpu ) ); \
+    } \
+    _ISR_Enable( isr_cookie ); \
+  } while ( 0 )
+#else
+#define _Per_CPU_Release_all( isr_cookie ) \
+  _ISR_Enable( isr_cookie )
+#endif
+
 #if defined( RTEMS_SMP )
 static inline Per_CPU_Control *_Per_CPU_Get( void )
 {
-  _Assert_Thread_dispatching_repressed();
+  Per_CPU_Control *per_cpu =
+    &_Per_CPU_Information[ _SMP_Get_current_processor() ].per_cpu;
 
-  return &_Per_CPU_Information[ _SMP_Get_current_processor() ].per_cpu;
+  _Assert(
+    per_cpu->thread_dispatch_disable_level != 0 || _ISR_Get_level() != 0
+  );
+
+  return per_cpu;
 }
 #else
 #define _Per_CPU_Get() ( &_Per_CPU_Information[ 0 ].per_cpu )
@@ -270,18 +330,14 @@ void _Per_CPU_Wait_for_state(
   Per_CPU_State desired_state
 );
 
-#define _Per_CPU_Lock_acquire( per_cpu, isr_cookie ) \
-  _SMP_lock_ISR_disable_and_acquire( &( per_cpu )->lock, isr_cookie )
-
-#define _Per_CPU_Lock_release( per_cpu, isr_cookie ) \
-  _SMP_lock_Release_and_ISR_enable( &( per_cpu )->lock, isr_cookie )
-
 #endif /* defined( RTEMS_SMP ) */
 
 /*
  * On a non SMP system, the _SMP_Get_current_processor() is defined to 0.
  * Thus when built for non-SMP, there should be no performance penalty.
  */
+#define _Thread_Dispatch_disable_level \
+  _Per_CPU_Get()->thread_dispatch_disable_level
 #define _Thread_Heir \
   _Per_CPU_Get()->heir
 #define _Thread_Executing \
@@ -310,7 +366,7 @@ void _Per_CPU_Wait_for_state(
    *  we need to have places in the per CPU table to hold them.
    */
   #define PER_CPU_INTERRUPT_STACK_LOW \
-    0
+    CPU_PER_CPU_CONTROL_SIZE
   #define PER_CPU_INTERRUPT_STACK_HIGH \
     PER_CPU_INTERRUPT_STACK_LOW + CPU_SIZEOF_POINTER
   #define PER_CPU_END_STACK             \
@@ -322,7 +378,7 @@ void _Per_CPU_Wait_for_state(
     (SYM(_Per_CPU_Information) + PER_CPU_INTERRUPT_STACK_HIGH)
 #else
   #define PER_CPU_END_STACK \
-    0
+    CPU_PER_CPU_CONTROL_SIZE
 #endif
 
 /*
@@ -330,9 +386,13 @@ void _Per_CPU_Wait_for_state(
  */
 #define PER_CPU_ISR_NEST_LEVEL \
   PER_CPU_END_STACK
-#define PER_CPU_DISPATCH_NEEDED \
+#define PER_CPU_THREAD_DISPATCH_DISABLE_LEVEL \
   PER_CPU_ISR_NEST_LEVEL + 4
+#define PER_CPU_DISPATCH_NEEDED \
+  PER_CPU_THREAD_DISPATCH_DISABLE_LEVEL + 4
 
+#define THREAD_DISPATCH_DISABLE_LEVEL \
+  (SYM(_Per_CPU_Information) + PER_CPU_THREAD_DISPATCH_DISABLE_LEVEL)
 #define ISR_NEST_LEVEL \
   (SYM(_Per_CPU_Information) + PER_CPU_ISR_NEST_LEVEL)
 #define DISPATCH_NEEDED \

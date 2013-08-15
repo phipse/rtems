@@ -7,7 +7,7 @@ include $(top_srcdir)/../../../automake/compile.am
 if VIRT_POK
 
 
-# TODO insert virt_pok cpu includes here
+# TODO insert virtual-pok cpu includes here
 include_libcpudir = $(includedir)/libcpu
 
 include_libcpu_HEADERS = cpu.h cpuModel.h

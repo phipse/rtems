@@ -1,12 +1,15 @@
 /**
  * @file
  * 
- * @brief Intel I386 Interrupt Macros
+ * @brief I386 Interrupt Macros
  *
- * Formerly contained in and extracted from libcpu/i386/cpu.h
+ *  Relocated from score/cpu/i386/.
  */
 
 /*
+ *  COPYRIGHT (c) 2013 Philipp Eppelt.
+ *    philipp.eppelt@mailbox.tu-dresden.de
+ *
  *  COPYRIGHT (c) 1998 valette@crf.canon.fr
  *
  *  The license and distribution terms for this file may be
@@ -28,7 +31,7 @@ typedef void (*rtems_raw_irq_enable)		(const struct __rtems_raw_irq_connect_data
 typedef void (*rtems_raw_irq_disable)		(const struct __rtems_raw_irq_connect_data__*);
 typedef int  (*rtems_raw_irq_is_enabled)	(const struct __rtems_raw_irq_connect_data__*);
 
-#include <virtLayerCPU.h>
+#include <virtualizationlayercpu.h>
 
 
 /**
@@ -39,23 +42,23 @@ typedef int  (*rtems_raw_irq_is_enabled)	(const struct __rtems_raw_irq_connect_d
 
 #define i386_disable_interrupts( _level ) \
   { \
-    virt_disableInterrupts( _level ); \
+    _CPU_Virtual_Interrupts_disable( _level ); \
   }
 
 #define i386_enable_interrupts( _level )  \
   { \
-    virt_enableInterrupts( _level ); \
+    _CPU_Virtual_Interrupts_enable( _level ); \
   }
 
 #define i386_flash_interrupts( _level ) \
   { \
-    virt_enableInterrupts(_level); \
-    virt_disableInterrupts(_level); \
+    _CPU_Virtual_Interrupts_enable(_level); \
+    _CPU_Virtual_Interrupts_disable(_level); \
   }
 
 #define i386_get_interrupt_level( _level ) \
   { \
-    virt_getInterruptLevel( _level ); \
+    _CPU_Virtual_Interrupts_get_level( _level ); \
   }
 
 #define _CPU_ISR_Disable( _level ) i386_disable_interrupts( _level )

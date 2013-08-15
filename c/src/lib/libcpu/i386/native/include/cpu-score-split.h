@@ -1,7 +1,7 @@
 /**
  * @file
  * 
- * @brief Virtualized Sensitive Intel I386 CPU Dependent Source
+ * @brief Virtualized Sensitive I386 CPU Dependent Source
  * 
  * This include file contains information for the virtualized i386
  * architecture. 
@@ -10,15 +10,14 @@
 #ifndef _RTEMS_LIBCPU_CPU_H
 #define _RTEMS_LIBCPU_CPU_H
 
+#include <rtems/score/i386.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <rtems/score/i386.h>
-
-
-
 #ifndef ASM
+
 /*
  *  ISR handler macros
  *
@@ -26,14 +25,11 @@ extern "C" {
  *     + set a particular level
  */
 
-
 #define _CPU_ISR_Set_level( _new_level ) \
   { \
     if ( _new_level ) __asm__ volatile ( "cli" ); \
     else              __asm__ volatile ( "sti" ); \
   }
-
-
 
 /*
  *  Fatal Error manager macros

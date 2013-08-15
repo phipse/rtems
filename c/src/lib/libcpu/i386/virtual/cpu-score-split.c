@@ -1,21 +1,19 @@
 /**
  *  @file
  *
- *  @brief Virtualization Sensitive Intel i386 Dependent Source
+ *  @brief Virtualization Sensitive i386 Dependent Source
  *
  *  Part of cpu.c that must be replaced with a virtualization acceptable way to
  *  idle. On i386 "hlt" is used, which is priviledged and causes a GPF.
  */
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+/*
+ *  COPYRIGHT (c) Philipp Eppelt.
+ *    philipp.eppelt@mailbox.tu-dresden.de
+ */
 
 #include <rtems/score/cpu.h>	// function definition
-#include <virtLayerCPU.h>
-
+#include <virtualizationlayercpu.h>
 
 /**
  * @brief Idle thread executes idle operation
@@ -28,12 +26,7 @@ void *_CPU_Thread_Idle_body( uintptr_t ignored )
 {
   while(1)
   {
-    virt_idleThread();
+    _CPU_Virtual_idle_thread();
   }
   return NULL;
 }
-
-
-#ifdef __cpluplus
-}
-#endif 

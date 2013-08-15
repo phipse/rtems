@@ -1,9 +1,9 @@
 /**
  * @file
  * 
- * @brief Intel I386 Interrupt Macros
+ * @brief I386 Interrupt Macros
  *
- * Formerly contained in and extracted from libcpu/i386/cpu.h
+ *  Relocated from score/cpu/i386/.
  */
 
 /*

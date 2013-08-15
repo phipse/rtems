@@ -30,7 +30,6 @@ extern "C" {
 #include <rtems/score/types.h>
 #include <rtems/score/i386.h>
 #include <libcpu/cpu-score-split.h>
-// TODO Fix includes for interrupts.h -- kept include structure in libcpu
 #ifndef ASM
 #include <libcpu/interrupts.h>	/* formerly in libcpu/cpu.h> */
 #include <rtems/score/registers.h>	/* formerly part of libcpu */
@@ -403,7 +402,6 @@ uint32_t   _CPU_ISR_Get_level( void );
  *     + calculate the initial pointer into a FP context area
  *     + initialize an FP context area
  */
-//TODO evaluate if CPU_EFLAGS_INTERRUPTS_* must be moved to libcpu
 #define CPU_EFLAGS_INTERRUPTS_ON  0x00003202
 #define CPU_EFLAGS_INTERRUPTS_OFF 0x00003002
 

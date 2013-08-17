@@ -415,14 +415,14 @@ documented.</p>
 <h2>Occurrence of an Interrupt</h2>
 
 <p>Quick and easy.
-* IRQ 0 occurs.
-* IDT lookup &ndash;> pok_interrupt_prologue_0
-* <em>ISR_Handler
-* </em>C_isr_handler lookup &ndash;> Meta_handler[0].handler[POK_CURRENT_PARTITION]
-* current partition handler
-* Update_tss
-* stack cleanup
-* iret</p>
+*   IRQ 0 occurs.
+*   IDT lookup &ndash;> pok_interrupt_prologue_0
+*   <em>ISR_Handler
+*   </em>C_isr_handler lookup &ndash;> Meta_handler[0].handler[POK_CURRENT_PARTITION]
+*   current partition handler
+*   Update_tss
+*   stack cleanup
+*   iret</p>
 
 <p>So that&rsquo;s it.
 And the only magic going on here is the cast to void<em> and cast back to

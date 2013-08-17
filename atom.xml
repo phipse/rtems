@@ -4,7 +4,7 @@
   <title><![CDATA[GSoC 2013 - RTEMS Virtualization Layer Project]]></title>
   <link href="http://phipse.github.io/rtems/atom.xml" rel="self"/>
   <link href="http://phipse.github.io/rtems/"/>
-  <updated>2013-08-18T00:46:19+02:00</updated>
+  <updated>2013-08-18T00:48:48+02:00</updated>
   <id>http://phipse.github.io/rtems/</id>
   <author>
     <name><![CDATA[Philipp Eppelt]]></name>
@@ -341,14 +341,14 @@ documented.</p>
 <h2>Occurrence of an Interrupt</h2>
 
 <p>Quick and easy.
-* IRQ 0 occurs.
-* IDT lookup &ndash;> pok_interrupt_prologue_0
-* <em>ISR_Handler
-* </em>C_isr_handler lookup &ndash;> Meta_handler[0].handler[POK_CURRENT_PARTITION]
-* current partition handler
-* Update_tss
-* stack cleanup
-* iret</p>
+*   IRQ 0 occurs.
+*   IDT lookup &ndash;> pok_interrupt_prologue_0
+*   <em>ISR_Handler
+*   </em>C_isr_handler lookup &ndash;> Meta_handler[0].handler[POK_CURRENT_PARTITION]
+*   current partition handler
+*   Update_tss
+*   stack cleanup
+*   iret</p>
 
 <p>So that&rsquo;s it.
 And the only magic going on here is the cast to void<em> and cast back to

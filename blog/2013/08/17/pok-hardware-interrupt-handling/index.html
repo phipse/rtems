@@ -183,18 +183,21 @@ the control flow for registering a handler and an interruption.</p>
 <p>For the non ASM gurus: The code at the bottom is invoking the define at the
 top. The define then replaces INTERRUPT_HANDLER(..). The name &ndash; in this case
 pit_interrupt &ndash; is used to build new functions: pit_interrupt(void) and
-pit_interrupt_handler(..).
-The ASM code describes the pit_interrupt function.
+pit_interrupt_handler(..).</p>
+
+<p>The ASM code describes the pit_interrupt function.
 When an interrupt occurs the CPU pushes several registers on the stack, then
 the code above takes over and pushes several registers on the stack too.
 At the end, the current stack-pointer is pushed and pit_interrupt_handler is
-called.
-Per definition pit_interrupt_handler takes a interrupt_frame pointer as an
+called.</p>
+
+<p>Per definition pit_interrupt_handler takes a interrupt_frame pointer as an
 argument.
 This pointer is passed on the stack, so &ldquo;push %esp&rdquo; is the &ldquo;interrupt_frame*&rdquo;.
 Now the function body at the bottom is executed and afterwards control jumps
-back to &ldquo;call update_tss&rdquo;.
-Afterwards the stack is cleaned up and iret jumps back to the point of
+back to &ldquo;call update_tss&rdquo;.</p>
+
+<p>Afterwards the stack is cleaned up and iret jumps back to the point of
 execution, when the interrupt occurred.</p>
 
 <h2>Dedicated prologue functions</h2>
@@ -245,8 +248,9 @@ To generate these functions for the 16 IRQ lines I had a look at RTEMS.</p>
 <p>This code generates a function for e.g. vector 0 and does exactly the same as
 the old code &ndash; building the interrupt_frame &ndash; before it jumps to <em>ISR_Handler.
 The ISR handler then pushes the vector argument in %eax to the stack and passes
-control to </em>C_isr_handler.
-After the C handler is done the vector number is removed from the stack and
+control to </em>C_isr_handler.</p>
+
+<p>After the C handler is done the vector number is removed from the stack and
 update_tss is called.
 From there on the code is equal to the old handler code above &ndash; just a bit
 better documented.</p>
@@ -327,8 +331,9 @@ allocated.</p>
 
 
 <p>I would love to have the ability for function overloading, but it&rsquo;s plain C and
-not C++.
-Hereby I introduce a new function to register the hardware interrupts.
+not C++.</p>
+
+<p>Hereby I introduce a new function to register the hardware interrupts.
 It checks if the irq number is in range, registers the handler, sets the
 meta_handlers vector number and registers the event. The offset of 32 is
 necessary, as the first 32 interrupts are reserved by Intel.</p>
@@ -414,15 +419,19 @@ documented.</p>
 
 <h2>Occurrence of an Interrupt</h2>
 
-<p>Quick and easy.
-*   IRQ 0 occurs.
-*   IDT lookup &ndash;> pok_interrupt_prologue_0
-*   <em>ISR_Handler
-*   </em>C_isr_handler lookup &ndash;> Meta_handler[0].handler[POK_CURRENT_PARTITION]
-*   current partition handler
-*   Update_tss
-*   stack cleanup
-*   iret</p>
+<p>Quick and easy.</p>
+
+<ul>
+<li>IRQ 0 occurs.</li>
+<li>IDT lookup &ndash;> pok_interrupt_prologue_0</li>
+<li>_ISR_Handler</li>
+<li>_C_isr_handler lookup &ndash;> Meta_handler[0].handler[POK_CURRENT_PARTITION]</li>
+<li>current partition handler</li>
+<li>Update_tss</li>
+<li>stack cleanup</li>
+<li>iret</li>
+</ul>
+
 
 <p>So that&rsquo;s it.
 And the only magic going on here is the cast to void<em> and cast back to

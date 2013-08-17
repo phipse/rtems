@@ -1,0 +1,563 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>POK Hardware Interrupt Handling - GSoC 2013 - RTEMS Virtualization Layer Project</title>
+  <meta name="author" content="Philipp Eppelt">
+
+  
+  <meta name="description" content="I finished a first working version of the new interrupt handling for the
+hardware interrupts on POK. I did not change the handling of system-calls or &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://phipse.github.io/rtems/blog/2013/08/17/pok-hardware-interrupt-handling">
+  <link href="/rtems/favicon.png" rel="icon">
+  <link href="/rtems/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/rtems/atom.xml" rel="alternate" title="GSoC 2013 - RTEMS Virtualization Layer Project" type="application/atom+xml">
+  <script src="/rtems/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/rtems/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/rtems/">GSoC 2013 - RTEMS Virtualization Layer Project</a></h1>
+  
+    <h2>Progress, Issues, Design</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/rtems/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:phipse.github.io/rtems" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/rtems/">Blog</a></li>
+  <li><a href="/rtems/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">POK Hardware Interrupt Handling</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-17T23:48:00+02:00" pubdate data-updated="true">Aug 17<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I finished a first working version of the new interrupt handling for the
+hardware interrupts on POK. I did not change the handling of system-calls or
+exceptions.</p>
+
+<p>In this post I will describe the old handling system, the dedicated callback
+functions for the IDT, a general ISR handler, the meta handler structure and
+the control flow for registering a handler and an interruption.</p>
+
+<!--more-->
+
+
+<h2>The old handler</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define INTERRUPT_HANDLER(name)                        \</span>
+</span><span class='line'><span class="cp">void name (void);                            \</span>
+</span><span class='line'><span class="cp">void name##_handler(interrupt_frame* frame);             \</span>
+</span><span class='line'><span class="cp">  asm (                                              \</span>
+</span><span class='line'><span class="cp">      &quot;.global &quot;#name &quot;           \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;\t.type &quot;#name&quot;,@function  \n&quot;                \</span>
+</span><span class='line'><span class="cp">      #name&quot;:               \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;cli          \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;subl $4, %esp            \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;pusha                \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;push %ds             \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;push %es             \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;push %esp            \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;mov $0x10, %ax           \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;mov %ax, %ds         \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;mov %ax, %es         \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;call &quot; #name&quot;_handler      \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;call update_tss          \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;addl $4, %esp            \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;pop %es              \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;pop %ds              \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;popa             \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;addl $4, %esp            \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;sti          \n&quot;                \</span>
+</span><span class='line'><span class="cp">      &quot;iret             \n&quot;                \</span>
+</span><span class='line'><span class="cp">      );                             \</span>
+</span><span class='line'><span class="cp">void name##_handler(interrupt_frame* frame)</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">\</span><span class="o">*</span> <span class="o">---------------------------------</span> <span class="o">*</span>\
+</span><span class='line'>
+</span><span class='line'><span class="n">INTERRUPT_HANDLER</span><span class="p">(</span><span class="n">pit_interrupt</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="n">frame</span><span class="p">;</span>
+</span><span class='line'>   <span class="n">pok_pic_eoi</span> <span class="p">(</span><span class="n">PIT_IRQ</span><span class="p">);</span>
+</span><span class='line'>   <span class="n">CLOCK_HANDLER</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For the non ASM gurus: The code at the bottom is invoking the define at the
+top. The define then replaces INTERRUPT_HANDLER(..). The name &ndash; in this case
+pit_interrupt &ndash; is used to build new functions: pit_interrupt(void) and
+pit_interrupt_handler(..).
+The ASM code describes the pit_interrupt function.
+When an interrupt occurs the CPU pushes several registers on the stack, then
+the code above takes over and pushes several registers on the stack too.
+At the end, the current stack-pointer is pushed and pit_interrupt_handler is
+called.
+Per definition pit_interrupt_handler takes a interrupt_frame pointer as an
+argument.
+This pointer is passed on the stack, so &ldquo;push %esp&rdquo; is the &ldquo;interrupt_frame*&rdquo;.
+Now the function body at the bottom is executed and afterwards control jumps
+back to &ldquo;call update_tss&rdquo;.
+Afterwards the stack is cleaned up and iret jumps back to the point of
+execution, when the interrupt occurred.</p>
+
+<h2>Dedicated prologue functions</h2>
+
+<p>The IDT won&rsquo;t tell you the interrupt line number of the current interrupt, so
+the callback function registered with the IDT must know the interrupt number.
+To generate these functions for the 16 IRQ lines I had a look at RTEMS.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define DISTINCT_INTERRUPT_ENTRY(_vector)    \</span>
+</span><span class='line'><span class="cp"> .p2align 4              ; \</span>
+</span><span class='line'><span class="cp"> .globl pok_irq_prologue_ ## _vector     ; \</span>
+</span><span class='line'><span class="cp">pok_irq_prologue_ ## _vector:          \</span>
+</span><span class='line'><span class="cp"> cli               ; \</span>
+</span><span class='line'><span class="cp"> subl  $4, %esp            ; \</span>
+</span><span class='line'><span class="cp"> pusha                 ; \</span>
+</span><span class='line'><span class="cp"> push  %ds             ; \</span>
+</span><span class='line'><span class="cp"> push  %es             ; \</span>
+</span><span class='line'><span class="cp">        push  %esp             ; \</span>
+</span><span class='line'><span class="cp"> mov   $0x10, %ax          ; \</span>
+</span><span class='line'><span class="cp">        mov   %ax, %ds             ; \</span>
+</span><span class='line'><span class="cp">        mov   %ax, %es             ; \</span>
+</span><span class='line'><span class="cp"> movl  $ _vector, %eax         ; \</span>
+</span><span class='line'><span class="cp"> jmp   _ISR_Handler        ; \</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="n">DISTINCT_INTERRUPT_ENTRY</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This code generates a function for e.g. vector 0 and does exactly the same as
+the old code &ndash; building the interrupt_frame &ndash; before it jumps to <em>ISR_Handler.
+The ISR handler then pushes the vector argument in %eax to the stack and passes
+control to </em>C_isr_handler.
+After the C handler is done the vector number is removed from the stack and
+update_tss is called.
+From there on the code is equal to the old handler code above &ndash; just a bit
+better documented.</p>
+
+<h2>Meta Handler Structure</h2>
+
+<p>The _C_isr_handler is a lookup function, indexing a table with the vector
+number and if registered invoking the handler for the vector of the current
+partition.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">void</span> <span class="nf">_C_isr_handler</span><span class="p">(</span> <span class="kt">unsigned</span> <span class="n">vector</span><span class="p">,</span> <span class="n">interrupt_frame</span> <span class="o">*</span><span class="n">frame</span> <span class="p">);</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">handler_table</span><span class="p">[</span><span class="n">vector</span><span class="p">].</span><span class="n">handler</span><span class="p">[</span><span class="n">POK_SCHED_CURRENT_PARTITION</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">NULL</span> <span class="p">)</span>
+</span><span class='line'>    <span class="n">handler_table</span><span class="p">[</span><span class="n">vector</span><span class="p">].</span><span class="n">handler</span><span class="p">[</span><span class="n">POK_SCHED_CURRENT_PARTITION</span><span class="p">](</span><span class="n">vector</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">frame</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At the current point in time there is no counting of interrupts for partitions
+not currently executing.
+For them the interrupt never occurred.
+This will change in the future.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">struct</span> <span class="n">meta_handler</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">unsigned</span> <span class="n">vector</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">handler</span><span class="p">[</span><span class="n">POK_CONFIG_NB_PARTITIONS</span><span class="p">])(</span><span class="kt">unsigned</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="k">typedef</span> <span class="k">struct</span> <span class="n">meta_handler</span> <span class="n">meta_handler</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The meta handler is a struct consisting of the vector number and an array of
+handlers for each partition.
+The meta handler is initialized at startup and space for the tables is
+allocated.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">pok_ret_t</span> <span class="nf">pok_meta_handler_init</span><span class="p">(</span> <span class="kt">void</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">for</span><span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">16</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">meta_handler</span> <span class="n">init</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">init</span><span class="p">.</span><span class="n">vector</span> <span class="o">=</span> <span class="mh">0xFFF</span><span class="p">;</span> <span class="cm">/* magic number &gt; IDT_SIZE */</span>
+</span><span class='line'>    <span class="k">for</span><span class="p">(</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">POK_CONFIG_NB_PARTITIONS</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span> <span class="p">)</span>
+</span><span class='line'>      <span class="n">init</span><span class="p">.</span><span class="n">handler</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="cm">/* No handlers present */</span>
+</span><span class='line'>    <span class="n">handler_table</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">init</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="p">(</span><span class="n">POK_ERRNO_OK</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I would love to have the ability for function overloading, but it&rsquo;s plain C and
+not C++.
+Hereby I introduce a new function to register the hardware interrupts.
+It checks if the irq number is in range, registers the handler, sets the
+meta_handlers vector number and registers the event. The offset of 32 is
+necessary, as the first 32 interrupts are reserved by Intel.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">pok_ret_t</span> <span class="nf">pok_bsp_irq_register_hw</span> <span class="p">(</span><span class="kt">uint8_t</span>   <span class="n">irq</span><span class="p">,</span>
+</span><span class='line'>                 <span class="kt">void</span>      <span class="p">(</span><span class="o">*</span><span class="n">irq_handler</span><span class="p">)(</span><span class="kt">unsigned</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span><span class="p">))</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">irq</span> <span class="o">&gt;</span> <span class="mi">15</span> <span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">(</span><span class="n">POK_ERRNO_EINVAL</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">pok_pic_unmask</span> <span class="p">(</span><span class="n">irq</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/* magic number: set in pok_meta_handler_init()</span>
+</span><span class='line'><span class="cm">   * meaning: vector not yet used */</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">handler_table</span><span class="p">[</span><span class="n">irq</span><span class="p">].</span><span class="n">vector</span> <span class="o">==</span> <span class="mh">0xFFF</span> <span class="p">)</span>
+</span><span class='line'>    <span class="n">handler_table</span><span class="p">[</span><span class="n">irq</span><span class="p">].</span><span class="n">vector</span> <span class="o">=</span> <span class="n">irq</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">handler_table</span><span class="p">[</span><span class="n">irq</span><span class="p">].</span><span class="n">handler</span><span class="p">[</span><span class="n">POK_SCHED_CURRENT_PARTITION</span><span class="p">]</span> <span class="o">=</span> <span class="n">irq_handler</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">pok_arch_event_register</span> <span class="p">(</span><span class="mi">32</span> <span class="o">+</span> <span class="n">irq</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="p">(</span><span class="n">POK_ERRNO_OK</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Registering an Interrupt Handler</h2>
+
+<p>To register a new handler for on of the 16 hardware interrupts, you need to
+write a handler function as before, but without the macro.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">void</span> <span class="nf">pit_ISR</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="n">vector</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">frame</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="n">interrupt_frame</span><span class="o">*</span><span class="p">)</span> <span class="n">frame</span><span class="p">;</span>
+</span><span class='line'>   <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="n">vector</span><span class="p">;</span>
+</span><span class='line'>   <span class="n">pok_pic_eoi</span> <span class="p">(</span><span class="n">PIT_IRQ</span><span class="p">);</span>
+</span><span class='line'>   <span class="n">CLOCK_HANDLER</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It has to have two arguments for the vector and the interrupt_frame pointer.
+This is a void pointer due to dependencies in bsp.h file.
+But as the old handler macro was a bit of magic, too, I guess this is okay and
+documented.</p>
+
+<p>To register this interrupt handler you invoke:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">pok_bsp_irq_register_hw</span> <span class="p">(</span><span class="n">PIT_IRQ</span><span class="p">,</span> <span class="n">pit_ISR</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>with PIT_IRQ being 0x0 and pit_ISR &ndash; guess it or look above.</p>
+
+<p>The rest is stated in the previous sections of this post.</p>
+
+<h2>Occurrence of an Interrupt</h2>
+
+<p>Quick and easy.
+* IRQ 0 occurs.
+* IDT lookup &ndash;> pok_interrupt_prologue_0
+* <em>ISR_Handler
+* </em>C_isr_handler lookup &ndash;> Meta_handler[0].handler[POK_CURRENT_PARTITION]
+* current partition handler
+* Update_tss
+* stack cleanup
+* iret</p>
+
+<p>So that&rsquo;s it.
+And the only magic going on here is the cast to void<em> and cast back to
+interrupt_frame</em> in the handler function.</p>
+
+<p>If you like you can have a look at the source code on
+<a href="https://github.com/phipse/pok">github</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Philipp Eppelt</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-17T23:48:00+02:00" pubdate data-updated="true">Aug 17<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/rtems/blog/2013/07/30/midterm-explanation/" title="Previous Post: Midterm explanation">&laquo; Midterm explanation</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/rtems/blog/2013/08/17/pok-hardware-interrupt-handling/">POK Hardware Interrupt Handling</a>
+      </li>
+    
+      <li class="post">
+        <a href="/rtems/blog/2013/07/30/midterm-explanation/">Midterm Explanation</a>
+      </li>
+    
+      <li class="post">
+        <a href="/rtems/blog/2013/07/28/generation-of-libpart-target/">Generation of Libpart Target</a>
+      </li>
+    
+      <li class="post">
+        <a href="/rtems/blog/2013/07/09/how-late-is-it/">How Late Is It?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/rtems/blog/2013/07/08/HelloWorld/">Hello World - Describing the Build Process</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/phipse">@phipse</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'phipse',
+            count: 5,
+            skip_forks: false,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/rtems/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Philipp Eppelt -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

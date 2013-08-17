@@ -9,8 +9,8 @@
   <meta name="author" content="Philipp Eppelt">
 
   
-  <meta name="description" content="It is midterm evaluation time, so half the time is up and I want to write about
-the changes I bring into the RTEMS project. This post will explain &hellip;">
+  <meta name="description" content="I finished a first working version of the new interrupt handling for the
+hardware interrupts on POK. I did not change the handling of system-calls or &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +66,53 @@ the changes I bring into the RTEMS project. This post will explain &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/rtems/blog/2013/08/17/pok-hardware-interrupt-handling/">POK Hardware Interrupt Handling</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-17T23:48:00+02:00" pubdate data-updated="true">Aug 17<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I finished a first working version of the new interrupt handling for the
+hardware interrupts on POK. I did not change the handling of system-calls or
+exceptions.</p>
+
+<p>In this post I will describe the old handling system, the dedicated callback
+functions for the IDT, a general ISR handler, the meta handler structure and
+the control flow for registering a handler and an interruption.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/rtems/blog/2013/08/17/pok-hardware-interrupt-handling/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -438,6 +485,10 @@ generate the necessary library.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/rtems/blog/2013/08/17/pok-hardware-interrupt-handling/">POK Hardware Interrupt Handling</a>
+      </li>
+    
+      <li class="post">
         <a href="/rtems/blog/2013/07/30/midterm-explanation/">Midterm Explanation</a>
       </li>
     
@@ -451,10 +502,6 @@ generate the necessary library.</p>
     
       <li class="post">
         <a href="/rtems/blog/2013/07/08/HelloWorld/">Hello World - Describing the Build Process</a>
-      </li>
-    
-      <li class="post">
-        <a href="/rtems/blog/2013/07/07/Modeling-the-partition/">Memory Partition and Pointers</a>
       </li>
     
   </ul>

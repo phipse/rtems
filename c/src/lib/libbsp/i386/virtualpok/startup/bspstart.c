@@ -29,10 +29,10 @@
 void bsp_start( void )
 {
 
-  virt_charWrite( "Hello RTEMS World\n" );
+  _BSP_Virtual_Char_write( "Hello RTEMS World\n" );
 
   char buff[] = {"RTEMS bsp_start()\n"};
 
-  virt_charWrite( buff );
+  _BSP_Virtual_Char_write( buff );
 
 }

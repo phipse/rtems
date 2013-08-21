@@ -28,12 +28,17 @@ _CPU_Virtual_Irq_detach( int vector );
 
 /**
  * \brief Enables interrupt delivery or sets it to the specified level.
+ * 
+ * Use this function in collaboration with _CPU_Virtual_Interrupts_disable and
+ * use its returned _level as argument to this function to assure proper
+ * behaviour.
  */
 __attribute__((fastcall)) void
 _CPU_Virtual_Interrupts_enable( int _level );
 
 /**
  * \brief Disables interrupt delivery and returns the previous level.
+ *
  */
 __attribute__((fastcall)) void
 _CPU_Virtual_Interrupts_disable( int _level );
@@ -43,18 +48,6 @@ _CPU_Virtual_Interrupts_disable( int _level );
  */
 __attribute__((fastcall)) void 
 _CPU_Virtual_Interrupts_flash( int _level );
-
-/**
- * \brief Opens up interrupts.
- */
-__attribute__((fastcall)) void
-_CPU_Virtual_Interrupts_open( void );
-
-/**
- * \brief Closes interrupts.
- */
-__attribute__((fastcall)) void
-_CPU_Virtual_Interrupts_close( void );
 
 /**
  * \brief Requests the current interrupt level.

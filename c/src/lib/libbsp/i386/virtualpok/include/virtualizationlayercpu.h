@@ -56,6 +56,10 @@ __attribute__((fastcall)) int
 _CPU_Virtual_Interrupts_get_level( int _level );
 
 
+__attribute__((fastcall)) void
+_CPU_Virtual_Interrupts_open(void);
+__attribute__((fastcall)) void
+_CPU_Virtual_Interrupts_close( void );
 
 /* Idle Thread */
 

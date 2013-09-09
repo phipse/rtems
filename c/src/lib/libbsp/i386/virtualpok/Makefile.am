@@ -19,8 +19,9 @@ nodist_include_bsp_HEADERS = ../../shared/include/bootcard.h
 DISTCLEANFILES = include/bspopts.h
 noinst_PROGRAMS =
 
-include_bsp_HEADERS  = ../shared/irq/irq.h
-include_bsp_HEADERS  += ../shared/irq/irq_asm.h
+include_bsp_HEADERS  = irq/irq.h
+include_bsp_HEADERS += ../../shared/include/irq-generic.h
+#include_bsp_HEADERS  += 
 
 nodist_include_HEADERS += ../../shared/include/coverhd.h
 
@@ -47,11 +48,13 @@ libbsp_a_SOURCES += ../../shared/sbrk.c
 libbsp_a_SOURCES += startup/setvec.c 
 libbsp_a_SOURCES += ../../shared/gnatinstallhandler.c 
 libbsp_a_SOURCES += ../../shared/bspreset_loop.c 
+libbsp_a_SOURCES += irq/irq.c 
+libbsp_a_SOURCES += ../../shared/src/irq-generic.c
 # TODO I don't really need an IDT, don't I?
 libbsp_a_SOURCES += ../../i386/shared/irq/idt.c
 
 # clock
-#libbsp_a_SOURCES += clock/ckinit.c
+libbsp_a_SOURCES += clock/ckinit.c
 # console
 libbsp_a_SOURCES += console/console.c
 # timer

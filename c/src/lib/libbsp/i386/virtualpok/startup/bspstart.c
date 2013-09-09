@@ -21,6 +21,8 @@
 #include <virtualizationlayerbsp.h>
 
 
+extern void rtems_irq_mngt_init(void);
+
 /*
  *  bsp_start
  *
@@ -35,4 +37,5 @@ void bsp_start( void )
 
   _BSP_Virtual_Char_write( buff );
 
+  rtems_irq_mngt_init();
 }

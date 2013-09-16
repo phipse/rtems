@@ -22,7 +22,7 @@ BSP_irq_count_dump(FILE *f)
 
 rtems_status_code bsp_interrupt_vector_enable(rtems_vector_number vector)
 {
-  _CPU_Virtual_Irq_request( vector );
+ // _CPU_Virtual_Irq_request( vector );
 
   return RTEMS_SUCCESSFUL;
 }
@@ -42,7 +42,7 @@ rtems_status_code bsp_interrupt_facility_initialize(void)
 
 void bsp_interrupt_handler_default(rtems_vector_number vector)
 {
-  printk( "WARNING: Somebodey forgot th register a handler for this interrupt: %u \n", vector );
+  printk( "WARNING: Somebody forgot to register a handler for this interrupt: %x \n", vector );
 }
 
 void C_dispatch_isr(int vector)

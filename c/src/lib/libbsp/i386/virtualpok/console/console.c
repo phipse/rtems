@@ -18,17 +18,9 @@
 #include <rtems/libio.h>
 #include <virtualizationlayerbsp.h>
 
-/*  console_initialize
- *
- *  This routine initializes the console IO driver.
- *
- *  Input parameters: NONE
- *
- *  Output parameters:  NONE
- *
- *  Return values:
+/**
+ * @brief Initializes the console.
  */
-
 rtems_device_driver console_initialize(
   rtems_device_major_number  major,
   rtems_device_minor_number  minor,
@@ -48,7 +40,7 @@ rtems_device_driver console_initialize(
     rtems_fatal_error_occurred(status);
   }
 
-// Virt: Added the virtual console init.
+// Virtual console init
   status = _BSP_Virtual_Console_init();
 
   if( status != 0 )
@@ -59,57 +51,18 @@ rtems_device_driver console_initialize(
   return RTEMS_SUCCESSFUL;
 }
 
-/*  is_character_ready
- *
- *  This routine returns TRUE if a character is available.
- *
- *  Input parameters: NONE
- *
- *  Output parameters:  NONE
- *
- *  Return values:
+/**
+ * @brief Read a char from the virtual console (if supported).
  */
-
-bool is_character_ready(
-  char *ch
-)
-{
-  *ch = '\0';   /* return NULL for no particular reason */
-  return true;
-}
-
-/*  inbyte
- *
- *  This routine reads a character from the SOURCE.
- *
- *  Input parameters: NONE
- *
- *  Output parameters:  NONE
- *
- *  Return values:
- *    character read from SOURCE
- */
-
 char inbyte( void )
 {
-  /*
-   *  If polling, wait until a character is available.
-   */
-
   return _BSP_Virtual_Char_read();
 }
 
-/*  outbyte
- *
- *  This routine transmits a character out the SOURCE.  It may support
- *  XON/XOFF flow control.
- *
- *  Input parameters:
- *    ch  - character to be transmitted
- *
- *  Output parameters:  NONE
- */
 
+/**
+ * @brief Write a char to the virtual console.
+ */
 void outbyte(
   char ch
 )
@@ -123,14 +76,15 @@ BSP_polling_getchar_function_type BSP_poll_char = inbyte;
 
 
 /* Console support */
-/* It is mostly a translation of termios intended calls to the char by char
- * printk interface
- */
 
 /*
- *  Open entry point
+ * It is mostly a translation of termios intended calls to the char by char
+ * printk interface.
  */
 
+/**
+ * @brief Does nothing.
+ */
 rtems_device_driver console_open(
   rtems_device_major_number major,
   rtems_device_minor_number minor,
@@ -140,10 +94,9 @@ rtems_device_driver console_open(
   return RTEMS_SUCCESSFUL;
 }
 
-/*
- *  Close entry point
+/**
+ * @brief Does nothing.
  */
-
 rtems_device_driver console_close(
   rtems_device_major_number major,
   rtems_device_minor_number minor,
@@ -157,6 +110,9 @@ rtems_device_driver console_close(
  * read bytes from the serial port. We only have stdin.
  */
 
+/**
+ * @brief Looks like termios, but reads through inbyte() function.
+ */
 rtems_device_driver console_read(
   rtems_device_major_number major,
   rtems_device_minor_number minor,
@@ -185,10 +141,9 @@ rtems_device_driver console_read(
   return (count >= 0) ? RTEMS_SUCCESSFUL : RTEMS_UNSATISFIED;
 }
 
-/*
- * write bytes to the serial port. Stdout and stderr are the same.
+/**
+ * @brief Looks like termios, but writes through outbyte() function.
  */
-
 rtems_device_driver console_write(
   rtems_device_major_number major,
   rtems_device_minor_number minor,
@@ -216,10 +171,9 @@ rtems_device_driver console_write(
   return 0;
 }
 
-/*
- *  IO Control entry point
+/**
+ * @brief Does nothing!
  */
-
 rtems_device_driver console_control(
   rtems_device_major_number major,
   rtems_device_minor_number minor,

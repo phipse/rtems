@@ -30,9 +30,9 @@
   for (i = 0; i < TEST_REPEAT; i++){                     \
     a = (R_TYPE)(rand() % ((R_TYPE)-1 / 2));             \
     b = (R_TYPE)(rand() % ((R_TYPE)-1 / 2));             \
-    _Atomic_Store_##NAME(&t, a, mem_bar);                \
+    _Atomic_Store_##NAME(&t, a, ATOMIC_ORDER_RELEASE);   \
     _Atomic_Fetch_add_##NAME(&t, b, mem_bar);            \
-    c = _Atomic_Load_##NAME(&t, mem_bar);                \
+    c = _Atomic_Load_##NAME(&t, ATOMIC_ORDER_ACQUIRE);   \
     rtems_test_assert(c == (R_TYPE)(a + b));             \
   }                                                      \
   locked_printf("\nCPU%d Atomic_Fetch_add_" #NAME ": SUCCESS\n", cpuid); \
@@ -55,17 +55,17 @@ rtems_task Test_task(
 
   /* Print that the task is up and running. */
   /* test relaxed barrier */
-  ATOMIC_FETCH_ADD_NO_BARRIER(uint, Uint, uint_fast32_t, cpu_num, ATOMIC_ORDER_RELAXED);
+  ATOMIC_FETCH_ADD_NO_BARRIER(ulong, Ulong, unsigned long, cpu_num, ATOMIC_ORDER_RELAXED);
 
   ATOMIC_FETCH_ADD_NO_BARRIER(ptr, Pointer, uintptr_t, cpu_num, ATOMIC_ORDER_RELAXED);
 
   /* test acquire barrier */
-  ATOMIC_FETCH_ADD_NO_BARRIER(uint, Uint, uint_fast32_t, cpu_num, ATOMIC_ORDER_ACQUIRE);
+  ATOMIC_FETCH_ADD_NO_BARRIER(ulong, Ulong, unsigned long, cpu_num, ATOMIC_ORDER_ACQUIRE);
 
   ATOMIC_FETCH_ADD_NO_BARRIER(ptr, Pointer, uintptr_t, cpu_num, ATOMIC_ORDER_ACQUIRE);
 
   /* test release barrier */
-  ATOMIC_FETCH_ADD_NO_BARRIER(uint, Uint, uint_fast32_t, cpu_num, ATOMIC_ORDER_RELEASE);
+  ATOMIC_FETCH_ADD_NO_BARRIER(ulong, Ulong, unsigned long, cpu_num, ATOMIC_ORDER_RELEASE);
 
   ATOMIC_FETCH_ADD_NO_BARRIER(ptr, Pointer, uintptr_t, cpu_num, ATOMIC_ORDER_RELEASE);
 

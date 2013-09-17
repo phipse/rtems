@@ -29,7 +29,7 @@
   for (i = 0; i < TEST_REPEAT; i++){                     \
     b = (R_TYPE)rand();                                  \
     _Atomic_Store_##NAME(&t, b, mem_bar);                \
-    a = _Atomic_Load_##NAME(&t, mem_bar);                \
+    a = _Atomic_Load_##NAME(&t, ATOMIC_ORDER_ACQUIRE);   \
     rtems_test_assert(a == b);                           \
   }                                                      \
   locked_printf("\nCPU%d Atomic_Store_" #NAME ": SUCCESS\n", cpuid); \
@@ -52,12 +52,12 @@ rtems_task Test_task(
 
   /* Print that the task is up and running. */
   /* test relaxed barrier */
-  ATOMIC_STORE_NO_BARRIER(uint, Uint, uint_fast32_t, cpu_num, ATOMIC_ORDER_RELAXED);
+  ATOMIC_STORE_NO_BARRIER(ulong, Ulong, unsigned long, cpu_num, ATOMIC_ORDER_RELAXED);
 
   ATOMIC_STORE_NO_BARRIER(ptr, Pointer, uintptr_t, cpu_num, ATOMIC_ORDER_RELAXED);
 
   /* test release barrier */
-  ATOMIC_STORE_NO_BARRIER(uint, Uint, uint_fast32_t, cpu_num, ATOMIC_ORDER_RELEASE);
+  ATOMIC_STORE_NO_BARRIER(ulong, Ulong, unsigned long, cpu_num, ATOMIC_ORDER_RELEASE);
 
   ATOMIC_STORE_NO_BARRIER(ptr, Pointer, uintptr_t, cpu_num, ATOMIC_ORDER_RELEASE);
 

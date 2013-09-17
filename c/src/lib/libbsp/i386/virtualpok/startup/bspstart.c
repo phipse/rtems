@@ -33,9 +33,9 @@ void bsp_start( void )
 
   _BSP_Virtual_Char_write( "Hello RTEMS World\n" );
 
-  char buff[] = {"RTEMS bsp_start()\n"};
-
-  _BSP_Virtual_Char_write( buff );
-
+  // Initialize IRQ management 
   rtems_irq_mngt_init();
+
+  // Register clock driver
+  Clock_driver_install_handler();
 }

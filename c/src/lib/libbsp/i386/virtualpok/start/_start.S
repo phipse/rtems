@@ -1,9 +1,11 @@
-/*  Date:     06/24/2013
-    Author:   Philipp Eppelt
-    Contact:  philipp.eppelt@mailbox.tu-dresden.de
-
-    Purpose:  Provide GNU entry point and directly go to bootcard.
-*/
+/*
+ *  COPYRIGHT (c) 2013/
+ *  Philipp Eppelt.
+ *
+ *  Contact:  philipp.eppelt@mailbox.tu-dresden.de
+ *
+ *  Purpose:  Provides GNU entry point and directly go to bootcard.
+ */
 
 #include <rtems/asm.h>
 #include <rtems/score/cpu.h>

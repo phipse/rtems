@@ -1,8 +1,7 @@
 rtems_tests_PROGRAMS = smpatomic01
-smpatomic01_SOURCES = init.c tasks.c system.h ../../support/src/locked_print.c
+smpatomic01_SOURCES = init.c
 
-dist_rtems_tests_DATA = smpatomic01.scn
-dist_rtems_tests_DATA += smpatomic01.doc
+dist_rtems_tests_DATA = smpatomic01.scn smpatomic01.doc
 
 include $(RTEMS_ROOT)/make/custom/@RTEMS_BSP@.cfg
 include $(top_srcdir)/../automake/compile.am

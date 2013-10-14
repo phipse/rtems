@@ -37,7 +37,6 @@
   #define LEON3_CLOCK_INDEX 0
 #endif
 
-
 volatile struct gptimer_regs *LEON3_Timer_Regs = 0;
 static int clkirq;
 
@@ -94,7 +93,7 @@ static int clkirq;
     LEON3_Timer_Regs->timer[LEON3_CLOCK_INDEX].ctrl = 0; \
   } while (0)
 
-uint32_t bsp_clock_nanoseconds_since_last_tick(void)
+static uint32_t bsp_clock_nanoseconds_since_last_tick(void)
 {
   uint32_t clicks;
   uint32_t usecs;

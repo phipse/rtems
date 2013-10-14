@@ -45,7 +45,6 @@ libbsp_a_SOURCES += ../../shared/bsppost.c
 libbsp_a_SOURCES += startup/bspstart.c 
 libbsp_a_SOURCES += ../../shared/bootcard.c 
 libbsp_a_SOURCES += ../../shared/sbrk.c 
-libbsp_a_SOURCES += startup/setvec.c 
 libbsp_a_SOURCES += ../../shared/gnatinstallhandler.c 
 libbsp_a_SOURCES += ../../shared/bspreset_loop.c 
 libbsp_a_SOURCES += irq/irq.c 
